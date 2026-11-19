@@ -28,6 +28,9 @@ FILES
 
 INSTALL (once)
 --------------
+  Step-by-step guide for Mac and Windows, with fixes for common problems:
+  HOW_TO_RUN.md (open it on the GitHub page of this project)
+
   1. Install Python 3.11 or newer from python.org (Windows or macOS)
   2. Open a terminal in this folder and run:
 
