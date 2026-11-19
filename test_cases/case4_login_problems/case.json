@@ -1,0 +1,10 @@
+{
+ "description": "Error handling - answers of the attendance site to a login (saved copies, no real password)",
+ "login_replies": [
+  "reply_wrong_password.json",
+  "reply_unknown_id.json",
+  "reply_site_error.json",
+  "reply_no_courses.json",
+  "reply_login_ok.json"
+ ]
+}

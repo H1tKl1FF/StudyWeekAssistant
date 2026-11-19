@@ -1,0 +1,23 @@
+{
+ "description": "Normal week - four members (one sends a screenshot), deadlines and attendance",
+ "today": "2026-11-16 09:00",
+ "timetables": [
+  "aziz.csv",
+  "mina.csv",
+  "lucas.csv",
+  "jisoo_screenshot.png"
+ ],
+ "earliest": "09:00",
+ "latest": "18:00",
+ "min_minutes": 60,
+ "calendars": [
+  "smart_lms_calendar.ics"
+ ],
+ "my_name": "Aziz",
+ "attendance_files": [
+  "attendance.csv"
+ ],
+ "site_course_replies": [
+  "site_reply_python.json"
+ ]
+}

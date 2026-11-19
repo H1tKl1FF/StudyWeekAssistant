@@ -1,0 +1,13 @@
+{
+  "description": "Smart LMS: deadlines from a saved answer (invented courses), an error answer, an empty list, a good login page and a wrong-password page",
+  "today": "2026-11-16 09:00",
+  "lms_pages": [
+    "lms_logged_in.html",
+    "lms_wrong_password.html"
+  ],
+  "lms_event_replies": [
+    "lms_events.json",
+    "lms_error.json",
+    "lms_no_events.json"
+  ]
+}

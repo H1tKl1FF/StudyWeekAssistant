@@ -1,0 +1,15 @@
+CASE: Smart LMS: deadlines from a saved answer (invented courses), an error answer, an empty list, a good login page and a wrong-password page
+
+lms_logged_in.html: logged in to Smart LMS
+lms_wrong_password.html: ERROR - Smart LMS did not accept this ID and password. If your Smart LMS password is different, upload the calendar file instead.
+lms_events.json:
+DEADLINES
+  [OVERDUE] Fri 13 Nov 12:00  Data Literacy: Lab report 4  (overdue)
+  [URGENT ] Tue 17 Nov 23:59  Business Communication: Team presentation slides  (1 day left)
+  [SOON   ] Fri 20 Nov 18:00  R&D Basics: Weekly quiz 9  (4 days left)
+  [LATER  ] Thu 10 Dec 00:00  Global Studies: Reflection essay  (23 days left)
+
+lms_error.json: ERROR - Smart LMS did not send the deadlines. Upload the calendar file instead.
+lms_no_events.json:
+DEADLINES
+  No deadlines found in the calendar.

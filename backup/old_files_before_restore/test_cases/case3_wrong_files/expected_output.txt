@@ -1,0 +1,20 @@
+CASE: Error handling - wrong, broken and empty files must give clear messages, not a crash
+
+Timetable of Aziz: 2 class blocks
+  Mon 10:00-12:00  Global Communication
+  Tue 13:00-14:25  Python for Business
+mina_broken_times.csv: ERROR - The timetable file has mistakes:
+  line 2: "25:99" is not a real time of day.
+  line 3: "Funday" is not a day. Use Mon, Tue, Wed, Thu, Fri, Sat or Sun.
+  line 4: the class ends (13:00) before it starts (14:00).
+  line 5: "one" is not a time. Write times like 13:30.
+lucas_missing_columns.csv: ERROR - The timetable file needs the columns day,start,end,course. Missing: day, start, end.
+jisoo_empty.csv: ERROR - The timetable file is empty.
+omar_holiday_photo.png: ERROR - This picture does not look like a Woosong timetable screenshot. Use a full screenshot of the Timetable page in the attendance app.
+sara_timetable.docx: ERROR - sara_timetable.docx: use a .csv timetable file or a .png/.jpg screenshot.
+
+Meeting finder: ERROR - Add at least two timetables to find a meeting time.
+not_a_calendar.ics: ERROR - This is not a calendar file. In Smart LMS open Calendar, choose Export calendar and upload the .ics file you get.
+attendance_wrong_numbers.csv: ERROR - The attendance file has mistakes:
+  line 2: the numbers add up to 43, but total says 48.
+  line 3: "ninety" in column total is not a whole number.

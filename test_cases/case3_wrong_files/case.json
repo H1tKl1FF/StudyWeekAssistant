@@ -1,0 +1,17 @@
+{
+ "description": "Error handling - wrong, broken and empty files must give clear messages, not a crash",
+ "timetables": [
+  "aziz.csv",
+  "mina_broken_times.csv",
+  "lucas_missing_columns.csv",
+  "jisoo_empty.csv",
+  "omar_holiday_photo.png",
+  "sara_timetable.docx"
+ ],
+ "calendars": [
+  "not_a_calendar.ics"
+ ],
+ "attendance_files": [
+  "attendance_wrong_numbers.csv"
+ ]
+}

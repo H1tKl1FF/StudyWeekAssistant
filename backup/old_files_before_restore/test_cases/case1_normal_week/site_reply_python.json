@@ -1,0 +1,1245 @@
+{
+ "xidedu": {
+  "pos": "iwin_st_chulseokbu",
+  "xmsg": "Ok"
+ },
+ "rollbook": [
+  {
+   "sugang_code": "2026-2-001-DEMO-D-2-1300",
+   "sugang_name": "Python for Business",
+   "sugang_class": "001",
+   "class_room": "(W7) 508",
+   "professor_name": "Demo Professor",
+   "sugang_week": "2",
+   "sugang_starttime": "1300",
+   "sugang_endtime": "1330",
+   "sugangWeekInfoForJspList": [
+    {
+     "sugang_order": 1,
+     "sugang_name": "Python for Business",
+     "sugang_date": "0901",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "22"
+      }
+     ]
+    },
+    {
+     "sugang_order": 2,
+     "sugang_name": "Python for Business",
+     "sugang_date": "0908",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "12"
+      }
+     ]
+    },
+    {
+     "sugang_order": 3,
+     "sugang_name": "Python for Business",
+     "sugang_date": "0915",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "32"
+      }
+     ]
+    },
+    {
+     "sugang_order": 4,
+     "sugang_name": "Python for Business",
+     "sugang_date": "0922",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "32"
+      }
+     ]
+    },
+    {
+     "sugang_order": 5,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1001",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "3"
+      }
+     ]
+    },
+    {
+     "sugang_order": 6,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1008",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "0"
+      }
+     ]
+    },
+    {
+     "sugang_order": 7,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1015",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "32"
+      }
+     ]
+    },
+    {
+     "sugang_order": 8,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1022",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "32"
+      }
+     ]
+    },
+    {
+     "sugang_order": 9,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1101",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "13"
+      }
+     ]
+    },
+    {
+     "sugang_order": 10,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1108",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "32"
+      }
+     ]
+    },
+    {
+     "sugang_order": 11,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1115",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "92"
+      }
+     ]
+    },
+    {
+     "sugang_order": 12,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1122",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "NONE"
+      }
+     ]
+    },
+    {
+     "sugang_order": 13,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1201",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "NONE"
+      }
+     ]
+    },
+    {
+     "sugang_order": 14,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1208",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "NONE"
+      }
+     ]
+    },
+    {
+     "sugang_order": 15,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1215",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "NONE"
+      }
+     ]
+    },
+    {
+     "sugang_order": 16,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1222",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "NONE"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "sugang_code": "2026-2-001-DEMO-D-2-1330",
+   "sugang_name": "Python for Business",
+   "sugang_class": "001",
+   "class_room": "(W7) 508",
+   "professor_name": "Demo Professor",
+   "sugang_week": "2",
+   "sugang_starttime": "1330",
+   "sugang_endtime": "1400",
+   "sugangWeekInfoForJspList": [
+    {
+     "sugang_order": 1,
+     "sugang_name": "Python for Business",
+     "sugang_date": "0901",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "22"
+      }
+     ]
+    },
+    {
+     "sugang_order": 2,
+     "sugang_name": "Python for Business",
+     "sugang_date": "0908",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "12"
+      }
+     ]
+    },
+    {
+     "sugang_order": 3,
+     "sugang_name": "Python for Business",
+     "sugang_date": "0915",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "32"
+      }
+     ]
+    },
+    {
+     "sugang_order": 4,
+     "sugang_name": "Python for Business",
+     "sugang_date": "0922",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "32"
+      }
+     ]
+    },
+    {
+     "sugang_order": 5,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1001",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "3"
+      }
+     ]
+    },
+    {
+     "sugang_order": 6,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1008",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "0"
+      }
+     ]
+    },
+    {
+     "sugang_order": 7,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1015",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "32"
+      }
+     ]
+    },
+    {
+     "sugang_order": 8,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1022",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "32"
+      }
+     ]
+    },
+    {
+     "sugang_order": 9,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1101",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "13"
+      }
+     ]
+    },
+    {
+     "sugang_order": 10,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1108",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "32"
+      }
+     ]
+    },
+    {
+     "sugang_order": 11,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1115",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "92"
+      }
+     ]
+    },
+    {
+     "sugang_order": 12,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1122",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "NONE"
+      }
+     ]
+    },
+    {
+     "sugang_order": 13,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1201",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "NONE"
+      }
+     ]
+    },
+    {
+     "sugang_order": 14,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1208",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "NONE"
+      }
+     ]
+    },
+    {
+     "sugang_order": 15,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1215",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "NONE"
+      }
+     ]
+    },
+    {
+     "sugang_order": 16,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1222",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "NONE"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "sugang_code": "2026-2-001-DEMO-D-2-1400",
+   "sugang_name": "Python for Business",
+   "sugang_class": "001",
+   "class_room": "(W7) 508",
+   "professor_name": "Demo Professor",
+   "sugang_week": "2",
+   "sugang_starttime": "1400",
+   "sugang_endtime": "1425",
+   "sugangWeekInfoForJspList": [
+    {
+     "sugang_order": 1,
+     "sugang_name": "Python for Business",
+     "sugang_date": "0901",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "22"
+      }
+     ]
+    },
+    {
+     "sugang_order": 2,
+     "sugang_name": "Python for Business",
+     "sugang_date": "0908",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "12"
+      }
+     ]
+    },
+    {
+     "sugang_order": 3,
+     "sugang_name": "Python for Business",
+     "sugang_date": "0915",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "32"
+      }
+     ]
+    },
+    {
+     "sugang_order": 4,
+     "sugang_name": "Python for Business",
+     "sugang_date": "0922",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "32"
+      }
+     ]
+    },
+    {
+     "sugang_order": 5,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1001",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "3"
+      }
+     ]
+    },
+    {
+     "sugang_order": 6,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1008",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "0"
+      }
+     ]
+    },
+    {
+     "sugang_order": 7,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1015",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "32"
+      }
+     ]
+    },
+    {
+     "sugang_order": 8,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1022",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "32"
+      }
+     ]
+    },
+    {
+     "sugang_order": 9,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1101",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "13"
+      }
+     ]
+    },
+    {
+     "sugang_order": 10,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1108",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "32"
+      }
+     ]
+    },
+    {
+     "sugang_order": 11,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1115",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "92"
+      }
+     ]
+    },
+    {
+     "sugang_order": 12,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1122",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "NONE"
+      }
+     ]
+    },
+    {
+     "sugang_order": 13,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1201",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "NONE"
+      }
+     ]
+    },
+    {
+     "sugang_order": 14,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1208",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "NONE"
+      }
+     ]
+    },
+    {
+     "sugang_order": 15,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1215",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "NONE"
+      }
+     ]
+    },
+    {
+     "sugang_order": 16,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1222",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "NONE"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "sugang_code": "2026-2-001-DEMO-D-4-1300",
+   "sugang_name": "Python for Business",
+   "sugang_class": "001",
+   "class_room": "(W7) 508",
+   "professor_name": "Demo Professor",
+   "sugang_week": "4",
+   "sugang_starttime": "1300",
+   "sugang_endtime": "1330",
+   "sugangWeekInfoForJspList": [
+    {
+     "sugang_order": 1,
+     "sugang_name": "Python for Business",
+     "sugang_date": "0901",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "22"
+      }
+     ]
+    },
+    {
+     "sugang_order": 2,
+     "sugang_name": "Python for Business",
+     "sugang_date": "0908",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "12"
+      }
+     ]
+    },
+    {
+     "sugang_order": 3,
+     "sugang_name": "Python for Business",
+     "sugang_date": "0915",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "32"
+      }
+     ]
+    },
+    {
+     "sugang_order": 4,
+     "sugang_name": "Python for Business",
+     "sugang_date": "0922",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "32"
+      }
+     ]
+    },
+    {
+     "sugang_order": 5,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1001",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "3"
+      }
+     ]
+    },
+    {
+     "sugang_order": 6,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1008",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "0"
+      }
+     ]
+    },
+    {
+     "sugang_order": 7,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1015",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "32"
+      }
+     ]
+    },
+    {
+     "sugang_order": 8,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1022",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "32"
+      }
+     ]
+    },
+    {
+     "sugang_order": 9,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1101",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "13"
+      }
+     ]
+    },
+    {
+     "sugang_order": 10,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1108",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "32"
+      }
+     ]
+    },
+    {
+     "sugang_order": 11,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1115",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "92"
+      }
+     ]
+    },
+    {
+     "sugang_order": 12,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1122",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "NONE"
+      }
+     ]
+    },
+    {
+     "sugang_order": 13,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1201",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "NONE"
+      }
+     ]
+    },
+    {
+     "sugang_order": 14,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1208",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "NONE"
+      }
+     ]
+    },
+    {
+     "sugang_order": 15,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1215",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "NONE"
+      }
+     ]
+    },
+    {
+     "sugang_order": 16,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1222",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "NONE"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "sugang_code": "2026-2-001-DEMO-D-4-1330",
+   "sugang_name": "Python for Business",
+   "sugang_class": "001",
+   "class_room": "(W7) 508",
+   "professor_name": "Demo Professor",
+   "sugang_week": "4",
+   "sugang_starttime": "1330",
+   "sugang_endtime": "1400",
+   "sugangWeekInfoForJspList": [
+    {
+     "sugang_order": 1,
+     "sugang_name": "Python for Business",
+     "sugang_date": "0901",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "22"
+      }
+     ]
+    },
+    {
+     "sugang_order": 2,
+     "sugang_name": "Python for Business",
+     "sugang_date": "0908",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "12"
+      }
+     ]
+    },
+    {
+     "sugang_order": 3,
+     "sugang_name": "Python for Business",
+     "sugang_date": "0915",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "32"
+      }
+     ]
+    },
+    {
+     "sugang_order": 4,
+     "sugang_name": "Python for Business",
+     "sugang_date": "0922",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "32"
+      }
+     ]
+    },
+    {
+     "sugang_order": 5,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1001",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "3"
+      }
+     ]
+    },
+    {
+     "sugang_order": 6,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1008",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "0"
+      }
+     ]
+    },
+    {
+     "sugang_order": 7,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1015",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "32"
+      }
+     ]
+    },
+    {
+     "sugang_order": 8,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1022",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "32"
+      }
+     ]
+    },
+    {
+     "sugang_order": 9,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1101",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "13"
+      }
+     ]
+    },
+    {
+     "sugang_order": 10,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1108",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "32"
+      }
+     ]
+    },
+    {
+     "sugang_order": 11,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1115",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "92"
+      }
+     ]
+    },
+    {
+     "sugang_order": 12,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1122",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "NONE"
+      }
+     ]
+    },
+    {
+     "sugang_order": 13,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1201",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "NONE"
+      }
+     ]
+    },
+    {
+     "sugang_order": 14,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1208",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "NONE"
+      }
+     ]
+    },
+    {
+     "sugang_order": 15,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1215",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "NONE"
+      }
+     ]
+    },
+    {
+     "sugang_order": 16,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1222",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "NONE"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "sugang_code": "2026-2-001-DEMO-D-4-1400",
+   "sugang_name": "Python for Business",
+   "sugang_class": "001",
+   "class_room": "(W7) 508",
+   "professor_name": "Demo Professor",
+   "sugang_week": "4",
+   "sugang_starttime": "1400",
+   "sugang_endtime": "1425",
+   "sugangWeekInfoForJspList": [
+    {
+     "sugang_order": 1,
+     "sugang_name": "Python for Business",
+     "sugang_date": "0901",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "22"
+      }
+     ]
+    },
+    {
+     "sugang_order": 2,
+     "sugang_name": "Python for Business",
+     "sugang_date": "0908",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "12"
+      }
+     ]
+    },
+    {
+     "sugang_order": 3,
+     "sugang_name": "Python for Business",
+     "sugang_date": "0915",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "32"
+      }
+     ]
+    },
+    {
+     "sugang_order": 4,
+     "sugang_name": "Python for Business",
+     "sugang_date": "0922",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "32"
+      }
+     ]
+    },
+    {
+     "sugang_order": 5,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1001",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "3"
+      }
+     ]
+    },
+    {
+     "sugang_order": 6,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1008",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "0"
+      }
+     ]
+    },
+    {
+     "sugang_order": 7,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1015",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "32"
+      }
+     ]
+    },
+    {
+     "sugang_order": 8,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1022",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "32"
+      }
+     ]
+    },
+    {
+     "sugang_order": 9,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1101",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "13"
+      }
+     ]
+    },
+    {
+     "sugang_order": 10,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1108",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "32"
+      }
+     ]
+    },
+    {
+     "sugang_order": 11,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1115",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "92"
+      }
+     ]
+    },
+    {
+     "sugang_order": 12,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1122",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "NONE"
+      }
+     ]
+    },
+    {
+     "sugang_order": 13,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1201",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "NONE"
+      }
+     ]
+    },
+    {
+     "sugang_order": 14,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1208",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "NONE"
+      }
+     ]
+    },
+    {
+     "sugang_order": 15,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1215",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "NONE"
+      }
+     ]
+    },
+    {
+     "sugang_order": 16,
+     "sugang_name": "Python for Business",
+     "sugang_date": "1222",
+     "sugangAttendLogList": [
+      {
+       "sugang_student_id": "20260001",
+       "sugang_student_name": "Demo Student",
+       "sugang_attend_kind": "NONE"
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "rollbookuser": [
+  {
+   "attendCountResultList": [
+    {
+     "attend_count": 42,
+     "late_count": 12,
+     "early_count": 0,
+     "absent_count": 6,
+     "none_count": 30
+    }
+   ]
+  }
+ ]
+}

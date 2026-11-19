@@ -1,0 +1,33 @@
+CASE: Edge case - busy group, no 2-hour slot works for everyone
+
+Timetable of Aziz: 5 class blocks
+  Mon 09:00-13:00  Morning Lab
+  Tue 09:00-13:00  Morning Lab
+  Wed 09:00-13:00  Morning Lab
+  Thu 09:00-13:00  Morning Lab
+  Fri 09:00-13:00  Morning Lab
+Timetable of Mina: 3 class blocks
+  Mon 13:00-16:30  Accounting
+  Wed 13:00-16:30  Accounting
+  Fri 13:00-16:30  Accounting
+Timetable of Lucas: 2 class blocks
+  Tue 13:00-16:30  Design Studio
+  Thu 13:00-16:30  Design Studio
+Timetable of Jisoo: 5 class blocks
+  Mon 16:30-18:00  Evening Korean
+  Tue 16:30-18:00  Evening Korean
+  Wed 16:30-18:00  Evening Korean
+  Thu 16:30-18:00  Evening Korean
+  Fri 16:30-18:00  Evening Korean
+
+MEETING FINDER
+  No time slot works for everyone.
+  Plan B - only one person is busy:
+    Mon 09:00-13:00  (4h, busy: Aziz)
+    Tue 09:00-13:00  (4h, busy: Aziz)
+    Wed 09:00-13:00  (4h, busy: Aziz)
+    Thu 09:00-13:00  (4h, busy: Aziz)
+    Fri 09:00-13:00  (4h, busy: Aziz)
+
+Message for the group chat:
+No time works for everyone this week. Can someone move a class or meet online?

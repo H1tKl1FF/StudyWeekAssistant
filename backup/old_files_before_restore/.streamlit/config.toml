@@ -1,0 +1,17 @@
+# Colours of the browser app: deep blue with warm accents.
+# There is a light and a dark version. Streamlit follows the computer's
+# setting (system mode) until the student picks Light or Dark in the app.
+[theme]
+primaryColor = "#185FA5"
+
+[theme.light]
+primaryColor = "#185FA5"
+backgroundColor = "#F7F9FC"
+secondaryBackgroundColor = "#E6F1FB"
+textColor = "#0C2340"
+
+[theme.dark]
+primaryColor = "#85B7EB"
+backgroundColor = "#0B1A2E"
+secondaryBackgroundColor = "#132A47"
+textColor = "#E6F1FB"

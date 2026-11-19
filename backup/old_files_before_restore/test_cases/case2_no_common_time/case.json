@@ -1,0 +1,12 @@
+{
+ "description": "Edge case - busy group, no 2-hour slot works for everyone",
+ "timetables": [
+  "aziz.csv",
+  "mina.csv",
+  "lucas.csv",
+  "jisoo.csv"
+ ],
+ "earliest": "09:00",
+ "latest": "18:00",
+ "min_minutes": 120
+}

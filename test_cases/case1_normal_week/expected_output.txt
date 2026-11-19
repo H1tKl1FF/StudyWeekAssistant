@@ -1,0 +1,68 @@
+CASE: Normal week - four members (one sends a screenshot), deadlines and attendance
+
+Timetable of Aziz: 7 class blocks
+  Mon 10:00-12:00  Global Communication
+  Mon 13:00-14:25  Marketing Principles
+  Tue 13:00-14:25  Python for Business
+  Tue 14:25-16:00  Project Management
+  Wed 13:00-14:25  Marketing Principles
+  Thu 13:00-14:25  Python for Business
+  Thu 14:25-16:00  Project Management
+Timetable of Mina: 7 class blocks
+  Mon 09:00-10:25  Business Statistics
+  Tue 10:00-12:00  Korean Culture
+  Tue 13:00-14:25  Python for Business
+  Wed 09:00-10:25  Business Statistics
+  Wed 14:25-16:00  Consumer Behavior
+  Thu 13:00-14:25  Python for Business
+  Fri 10:00-12:00  Consumer Behavior
+Timetable of Lucas: 6 class blocks
+  Mon 13:00-16:00  Design Studio
+  Tue 13:00-14:25  Python for Business
+  Wed 09:00-12:00  Design Studio
+  Thu 13:00-14:25  Python for Business
+  Thu 16:25-18:25  Korean Culture
+  Fri 13:00-14:25  Business Ethics
+Timetable of Jisoo: 6 class blocks
+  Mon 10:00-12:00  Class
+  Tue 13:00-14:25  Class
+  Tue 14:25-16:00  Class
+  Wed 16:25-18:25  Class
+  Thu 13:00-14:25  Class
+  Fri 09:00-10:25  Class
+
+MEETING FINDER
+  9 time slots work for everyone. Best first:
+    Thu 09:00-13:00  (4h)
+    Fri 14:25-18:00  (3h 35min)
+    Mon 16:00-18:00  (2h)
+    Tue 16:00-18:00  (2h)
+    Mon 12:00-13:00  (1h)
+
+Message for the group chat:
+We are all free at these times:
+- Thu 09:00-13:00 (4h)
+- Fri 14:25-18:00 (3h 35min)
+- Mon 16:00-18:00 (2h)
+Which one works best?
+
+DEADLINES
+  [OVERDUE] Fri 13 Nov 23:59  Korean Culture: Reflection essay  (overdue)
+  [URGENT ] Tue 17 Nov 23:59  Marketing Principles: Case study report  (1 day left, 17.6 free hours before)
+  [SOON   ] Thu 19 Nov 00:00  Python for Business: Data cleaning exercise  (2 days left, 28.2 free hours before)
+  [SOON   ] Fri 20 Nov 00:00  Business Statistics: Quiz 3 opens  (3 days left, 37.2 free hours before)
+  [LATER  ] Mon 23 Nov 18:00  Project Management: Team charter  (7 days left, 78.8 free hours before)
+  [LATER  ] Tue 01 Dec 18:00  Python for Business: Final group project  (15 days left, 160.9 free hours before)
+
+ATTENDANCE
+  [SAFE   ] Global Communication: 1 of 10 allowed absences used, can still miss 9
+  [SAFE   ] Marketing Principles: 4 of 16 allowed absences used, can still miss 12
+  [SAFE   ] Python for Business: 10 of 32 allowed absences used, can still miss 22
+  [DANGER ] Project Management: 12 of 16 allowed absences used, can still miss 4
+
+site_reply_python.json:
+Timetable of Python for Business: 2 class blocks
+  Tue 13:00-14:25  Python for Business
+  Thu 13:00-14:25  Python for Business
+ATTENDANCE
+  [SAFE   ] Python for Business: 10 of 32 allowed absences used, can still miss 22

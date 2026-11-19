@@ -1,0 +1,7 @@
+CASE: Error handling - answers of the attendance site to a login (saved copies, no real password)
+
+reply_wrong_password.json: ERROR - The ID or password is wrong. Please try again.
+reply_unknown_id.json: ERROR - This student ID is not registered on the attendance site.
+reply_site_error.json: ERROR - The attendance site did not accept the login.
+reply_no_courses.json: ERROR - The login worked, but no courses were found for this semester.
+reply_login_ok.json: login accepted for Demo Student, 2 courses found

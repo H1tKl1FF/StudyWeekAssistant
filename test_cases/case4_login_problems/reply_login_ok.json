@@ -1,0 +1,33 @@
+{
+ "xidedu": {
+  "pos": "iwin_sin",
+  "xmsg": "Ok"
+ },
+ "xuser": {
+  "USER_ID": "20260001",
+  "USER_NM": "Demo Student"
+ },
+ "rollbook": [
+  {
+   "sugang_code": "2026-2-001-DEMO1-D-2-1300",
+   "sugang_name": "Python for Business",
+   "sugang_class": "001",
+   "sugang_week": "2",
+   "sugang_starttime": "1300"
+  },
+  {
+   "sugang_code": "2026-2-001-DEMO1-D-4-1300",
+   "sugang_name": "Python for Business",
+   "sugang_class": "001",
+   "sugang_week": "4",
+   "sugang_starttime": "1300"
+  },
+  {
+   "sugang_code": "2026-2-002-DEMO2-D-1-1000",
+   "sugang_name": "Global Communication",
+   "sugang_class": "002",
+   "sugang_week": "1",
+   "sugang_starttime": "1000"
+  }
+ ]
+}

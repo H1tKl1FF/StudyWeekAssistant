@@ -1,0 +1,16 @@
+{
+ "description": "Edge cases - a member with no classes, classes outside the day, attendance exactly at the limit, empty calendar",
+ "timetables": [
+  "aziz.csv",
+  "mina.csv"
+ ],
+ "earliest": "09:00",
+ "latest": "18:00",
+ "min_minutes": 90,
+ "calendars": [
+  "empty_calendar.ics"
+ ],
+ "attendance_files": [
+  "attendance_edge.csv"
+ ]
+}

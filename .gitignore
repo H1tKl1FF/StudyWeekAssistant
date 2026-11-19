@@ -1,0 +1,11 @@
+# Files Python and the test runner make again by themselves
+__pycache__/
+*.pyc
+actual_output.txt
+
+# Local copies and archives, not part of the project
+101/
+*.zip
+
+# Local tool settings
+.claude/
