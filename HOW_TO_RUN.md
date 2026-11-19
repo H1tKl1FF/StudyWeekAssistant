@@ -14,23 +14,42 @@ and about 1 minute every time after that.
 
 ## Part 1: Get the project files
 
-The project is in a **private** GitHub repository, so you first need access.
+Choose **A** if a teammate sent you the zip file (most of you), or **B** if you
+were invited to the GitHub repository.
 
-1. Send your **GitHub username** to the repository owner.
-   (No account yet? Make a free one at <https://github.com/signup>.)
-2. You get an invitation email from GitHub. Open it and click **Accept invitation**.
-3. Open <https://github.com/H1tKl1FF/StudyWeekAssistant>.
-4. Click the green **Code** button, then **Download ZIP**.
-5. Find the downloaded file `StudyWeekAssistant-main.zip` (usually in **Downloads**)
-   and unzip it:
-   - **Mac:** double-click the zip.
-   - **Windows:** right-click the zip, **Extract All...**, then **Extract**.
-6. Move the unzipped folder somewhere easy to find, for example your **Desktop**.
-   Inside it you should see `app_browser.py`, `project_code.py`,
-   `requirements.txt` and a `test_cases` folder.
+### A. You got `StudyWeekAssistant.zip` from a teammate
 
-> No GitHub? The owner can also send you the project as a zip file.
-> Unzip it and continue with Part 2.
+1. **Save the zip to your computer.**
+   - **KakaoTalk / Telegram / other chat app:** click the file, then
+     **Save** (or **Save as**). It usually lands in your **Downloads** folder.
+   - **Email:** click the attachment's download arrow.
+   - Do not open the files inside the zip directly from the chat app. Save the
+     zip first.
+2. **Unzip it.**
+   - **Mac:** open **Finder**, go to **Downloads** and double-click
+     `StudyWeekAssistant.zip`. A folder `StudyWeekAssistant` appears next to it.
+   - **Windows:** open **Downloads**, right-click `StudyWeekAssistant.zip`,
+     choose **Extract All...**, then **Extract**.
+     (Do not just double-click into the zip and run things from there.
+     Windows only shows a preview, and Python cannot install inside it.)
+3. **Move the folder to your Desktop.** Drag the `StudyWeekAssistant` folder
+   onto your **Desktop**. The rest of this guide assumes it is there.
+4. **Check the folder.** Open it. You should see `app_browser.py`,
+   `project_code.py`, `requirements.txt`, `HOW_TO_RUN.md` and a `test_cases`
+   folder. If you see only one more folder with the same name inside, open
+   that one: that is the project folder.
+
+> Got a newer zip later? Delete the old `StudyWeekAssistant` folder first,
+> then unzip the new one. On Mac, you need to repeat Part 2A, Step 3 once.
+
+### B. You were invited on GitHub
+
+1. Accept the invitation email from GitHub.
+2. Open <https://github.com/H1tKl1FF/StudyWeekAssistant>.
+3. Click the green **Code** button, then **Download ZIP**.
+4. Unzip it as in A, step 2. The folder is called `StudyWeekAssistant-main`.
+   You can rename it to `StudyWeekAssistant`.
+5. Move it to your **Desktop**.
 
 ---
 
@@ -192,7 +211,7 @@ If Windows Firewall asks about Python, click **Allow** (Private networks).
 **Mac** (open Terminal, then):
 
 ```bash
-cd ~/Desktop/StudyWeekAssistant-main
+cd ~/Desktop/StudyWeekAssistant
 ```
 
 ```bash
@@ -224,7 +243,9 @@ Then type `1`. Change the `cd` path if you put the folder somewhere else.
 | `No module named streamlit` | The libraries are not installed yet. Run Step 3 again. On Mac, check for `(.venv)` first. |
 | `No such file or directory: requirements.txt` | The terminal is in the wrong folder. Repeat Step 2. |
 | `Port 8501 is already in use` | The app is already running in another window. Use that one, or close it with `Ctrl + C`. |
-| The app looks plain or shows a sidebar | You have an old copy. Download the ZIP again from GitHub. |
+| The app looks plain or shows a sidebar | You have an old copy. Ask for the newest zip, delete the old folder and unzip again. |
+| Mac: "cannot be opened because it is from an unidentified developer" | Do not double-click the `.py` files. Always start the app from Terminal as in Step 5. |
+| Windows: the folder has a zipper icon / "file is read-only" | You are inside the zip, not the unzipped folder. Use **Extract All...** (Part 1, A step 2). |
 | "Smart LMS did not accept this ID and password" | Your Smart LMS password may differ. Upload the calendar `.ics` file on **My data** instead. |
 | Browser shows "This site can't be reached" | The app is not running. Check the Terminal window for errors and start it again. |
 
