@@ -21,6 +21,9 @@ FILES
                      My data and Help pages
   .streamlit/        The colour theme of the browser app (deep blue)
   backup/            The previous version of app_browser.py
+  packaging/         Builds the Windows installer (StudyWeekAssistant-Setup.exe):
+                       powershell -ExecutionPolicy Bypass -File packaging\build_windows.ps1
+                     Needs Python and Inno Setup 6. The result is in dist\.
   requirements.txt   The libraries to install
   test_cases/        Six test cases with input files and expected output
   README.txt         This file

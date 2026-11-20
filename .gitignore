@@ -7,5 +7,10 @@ actual_output.txt
 101/
 *.zip
 
+# Windows installer build output (made by packaging/build_windows.ps1)
+.build/
+dist/
+packaging/app_icon.ico
+
 # Local tool settings
 .claude/
