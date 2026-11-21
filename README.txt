@@ -17,9 +17,11 @@ FILES
 -----
   project_code.py    All calculations, the test runner and the start menu
   app_browser.py     The browser app (screens only, uses project_code.py):
-                     a home dashboard plus Meet, Deadlines, Attendance,
-                     My data and Help pages
-  .streamlit/        The colour theme of the browser app (deep blue)
+                     Home (the week as three ruled lines) plus Meet,
+                     Deadlines, Attendance, My data and Help pages
+  styles/            The look of the browser app: tokens.css (colours, type,
+                     spacing, light and dark), base.css and app.css
+  .streamlit/        The same colours for Streamlit's own buttons and fields
   backup/            The previous version of app_browser.py
   packaging/         Builds the Windows installer (StudyWeekAssistant-Setup.exe):
                        powershell -ExecutionPolicy Bypass -File packaging\build_windows.ps1

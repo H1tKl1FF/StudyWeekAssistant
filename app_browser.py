@@ -3,8 +3,9 @@ STUDY WEEK ASSISTANT - browser app
 
 This file only draws the screens. All calculations are in project_code.py.
 
-Layout: a home dashboard with three cards (Meet, Deadlines, Attendance).
-Each card opens a full page. Colours: deep blue with warm accents.
+Layout: a greeting and a row of page tabs. Home shows the week as three ruled
+lines (Meet, Deadlines, Attendance), and each line opens a full page.
+The look (warm paper, ink and one deep coral) is in the styles/ folder.
 
 Start it with:   streamlit run app_browser.py
 (or run project_code.py and choose 1)
@@ -40,8 +41,6 @@ ATTENDANCE_LABELS = {"FAILED": "Over the limit", "DANGER": "Almost at the limit"
 ATTENDANCE_COLOURS = {"FAILED": "red", "DANGER": "red", "WARNING": "amber",
                       "SAFE": "green", "NO DATA": "grey"}
 ATTENDANCE_ORDER = ["FAILED", "DANGER", "WARNING", "SAFE", "NO DATA"]
-# The amber is the darker one, so bars and row edges stand out at least 3:1 on white
-BAR_COLOURS = {"red": "#E24B4A", "amber": "#BA7517", "green": "#639922", "grey": "#888780"}
 
 PAGES = [("home", "Home", ":material/home:"),
          ("meet", "Meet", ":material/groups:"),
@@ -50,90 +49,55 @@ PAGES = [("home", "Home", ":material/home:"),
          ("data", "My data", ":material/upload_file:"),
          ("help", "Help", ":material/help:")]
 
-# Colours of theme 2: deep blue (#0C447C, #185FA5, #E6F1FB) with warm accents (#EF9F27).
-STYLE = """
-<style>
-.block-container {padding-top: 3.2rem; max-width: 1120px;}
-[data-testid="stSidebar"], [data-testid="stSidebarCollapsedControl"] {display: none;}
-button[kind="primary"], [data-testid="stBaseButton-primary"] {
-    background: #EF9F27; border-color: #EF9F27; color: #412402;}
-/* Darker amber on hover so the white text stays readable (5:1) */
-button[kind="primary"]:hover, [data-testid="stBaseButton-primary"]:hover {
-    background: #9A6212; border-color: #9A6212; color: #FFFFFF;}
-/* Keyboard focus: keep the amber button readable and draw a clear blue ring */
-button[kind="primary"]:focus:not(:hover), [data-testid="stBaseButton-primary"]:focus:not(:hover) {
-    background: #EF9F27; border-color: #EF9F27; color: #412402;}
-button[kind="primary"]:focus-visible, [data-testid="stBaseButton-primary"]:focus-visible {
-    box-shadow: 0 0 0 2px #FFFFFF, 0 0 0 4px #0C447C; outline: none;}  /* shows in light and dark mode */
-/* The open page is marked by an underline too, not only by its colour */
-.st-key-swa_nav [data-testid="stBaseButton-primary"] p {
-    text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px;}
-/* Text only screen readers read out */
-.swa-sr {position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden;
-         clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;}
-.swa-top {background: #0C447C; border-radius: 14px; padding: 18px 24px; margin-bottom: 10px;}
-.swa-top .title {color: #FFFFFF; font-size: 1.55rem; font-weight: 700; margin: 0; padding: 0;}
-.swa-top p {color: #B5D4F4; margin: 4px 0 0 0;}
-.swa-top h1.title {line-height: 1.3;}
-.swa-top [data-testid="stHeaderActionElements"] {display: none;}  /* no link icon on the greeting */
-.swa-demo {background: rgba(239, 159, 39, 0.18); border: 1px solid rgba(239, 159, 39, 0.6);
-            border-radius: 12px; padding: 9px 14px; margin: 0;}
-/* Everything below uses see-through tints and inherits the text colour,
-   so it looks right in light mode, dark mode and system mode. */
-.swa-card, .swa-tile, .swa-step {background: rgba(55, 138, 221, 0.12);
-           border: 1px solid rgba(55, 138, 221, 0.30); color: inherit;}
-.swa-card {border-radius: 14px; padding: 16px 18px; min-height: 168px; margin-bottom: 8px;}
-.swa-card .label, .swa-card .sub, .swa-tile .label, .swa-step p, .swa-row .meta {
-           font-size: 0.85rem; opacity: 0.8;}
-.swa-card .label {margin: 0;}
-.swa-card .big {font-size: 1.4rem; font-weight: 600; margin: 4px 0 10px 0; line-height: 1.25;}
-.swa-card .sub {margin: 10px 0 0 0;}
-.swa-badge {display: inline-block; font-size: 0.8rem; font-weight: 500; padding: 2px 10px;
-            border-radius: 999px; color: inherit;}
-.swa-badge.green {background: rgba(99, 153, 34, 0.30);}
-.swa-badge.amber {background: rgba(239, 159, 39, 0.35);}
-.swa-badge.red {background: rgba(226, 75, 74, 0.30);}
-.swa-badge.grey {background: rgba(136, 135, 128, 0.30);}
-.swa-badge.blue {background: rgba(55, 138, 221, 0.30);}
-.swa-row {background: rgba(55, 138, 221, 0.05); border: 1px solid rgba(55, 138, 221, 0.30);
-          border-radius: 12px; padding: 12px 16px; margin-bottom: 8px; color: inherit;}
-.swa-row .title {font-weight: 600; margin: 0;}
-/* Course name and "N more absences left" share one line, and wrap on phones */
-.swa-row .head {display: flex; flex-wrap: wrap; justify-content: space-between;
-                align-items: center; gap: 2px 12px;}
-/* On phones keep the page buttons in a grid of three instead of seven rows */
-@media (max-width: 640px) {
-  .st-key-swa_nav [data-testid="stHorizontalBlock"] {flex-flow: row wrap; gap: 0.5rem;}
-  .st-key-swa_nav [data-testid="stColumn"] {flex: 1 1 calc(33.3% - 0.5rem) !important;
-                                            min-width: calc(33.3% - 0.5rem) !important;}
-  .st-key-swa_nav button {padding-left: 0.3rem; padding-right: 0.3rem;}
-}
-.swa-row .meta {margin: 4px 0 0 0;}
-.swa-bar {height: 8px; background: rgba(55, 138, 221, 0.18); border-radius: 4px; overflow: hidden;
-          margin-top: 8px;}
-.swa-bar span {display: block; height: 100%;}
-.swa-tile {border-radius: 12px; padding: 10px 14px;}
-.swa-tile .num {font-size: 1.6rem; font-weight: 600; margin: 0;}
-.swa-tile .label {margin: 0;}
-.swa-step {border-radius: 12px; padding: 14px 16px; min-height: 120px;}
-.swa-step .num {display: inline-block; width: 28px; height: 28px; line-height: 28px;
-                text-align: center; border-radius: 50%; background: #185FA5; color: #FFFFFF;
-                font-weight: 600; margin-bottom: 6px;}
-.swa-step p {margin: 0;}
-.swa-grid {border-collapse: collapse; width: 100%;}
-.swa-grid th {background: #0C447C; color: #FFFFFF; padding: 4px 6px; font-size: 12px;}
-.swa-grid td {padding: 3px 6px; border: 1px solid rgba(128, 128, 128, 0.25); text-align: center;
-              font-size: 12px; color: inherit;}
-.swa-grid td.time, .swa-grid th.time {white-space: nowrap;}
-.swa-grid th.time {background: none; color: inherit; font-weight: 400; padding: 3px 6px; text-align: center;
-                   border: 1px solid rgba(128, 128, 128, 0.25);}
-.swa-grid td.free {background: rgba(99, 153, 34, 0.30);}
-.swa-grid td.one {background: rgba(239, 159, 39, 0.35);}
-.swa-grid td.many {background: rgba(55, 138, 221, 0.25);}
-</style>
+# The look lives in styles/: tokens.css (colours, type, spacing), base.css and app.css.
+STYLE_FILES = ("tokens.css", "base.css", "app.css")
+STYLE_FOLDER = os.path.join(HERE, "styles")
+
+
+def load_styles():
+    """Read the three style files once, without their @import lines (the files are joined here)."""
+    parts = []
+    for file_name in STYLE_FILES:
+        with open(os.path.join(STYLE_FOLDER, file_name), encoding="utf-8") as style_file:
+            parts.append("".join(line for line in style_file if not line.startswith("@import")))
+    return "<style>\n" + "\n".join(parts) + "\n</style>"
+
+
+# Streamlit switches light and dark mode in the browser without rerunning this file.
+# This small script reads the background Streamlit paints and tells the style files
+# which mode is on (data-swa-mode on the page), at once and after every switch.
+THEME_WATCH = """
+<script>
+(() => {
+  if (window.swaThemeWatch) { window.swaThemeWatch(); return; }
+  const root = document.documentElement;
+  const isDark = (colour) => {
+    const [r, g, b] = (colour.match(/[\d.]+/g) || ["255", "255", "255"]).map(Number);
+    return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255 < 0.45;
+  };
+  const update = () => {
+    const app = document.querySelector(".stApp");
+    if (!app) return;
+    root.dataset.swaMode = isDark(getComputedStyle(app).backgroundColor) ? "dark" : "light";
+  };
+  window.swaThemeWatch = update;
+  new MutationObserver(() => requestAnimationFrame(update))
+    .observe(document.head, {childList: true, subtree: true, characterData: true});
+  new MutationObserver(() => requestAnimationFrame(update))
+    .observe(document.body, {attributes: true, subtree: true, attributeFilter: ["class"]});
+  update();
+})();
+</script>
 """
 
-st.set_page_config(page_title="Study Week Assistant", page_icon="📚", layout="wide",
+
+def draw_styles():
+    """The style files, and the script that follows Streamlit's light or dark mode."""
+    st.markdown(load_styles(), unsafe_allow_html=True)
+    st.html(THEME_WATCH, unsafe_allow_javascript=True)
+
+
+st.set_page_config(page_title="Study Week Assistant", page_icon=":material/calendar_month:", layout="wide",
                    initial_sidebar_state="collapsed")
 
 
@@ -143,7 +107,8 @@ def safe(text):
 
 
 def badge(text, colour):
-    return f'<span class="swa-badge {colour}">{safe(text)}</span>'
+    """A small status tag. The colour name (green, amber, red, grey) becomes the tag's state colour."""
+    return f'<span class="swa-tag {colour}">{safe(text)}</span>'
 
 
 # ----------------------------------------------------------------------------
@@ -237,38 +202,43 @@ def draw_top_bar():
     hour = current_time().hour
     greeting = "Good morning" if hour < 12 else "Good afternoon" if hour < 18 else "Good evening"
     date_text = current_time().strftime("%A %d %B %Y")
-    st.markdown(f'<div class="swa-top"><h1 class="title">{greeting}, {safe(name)}</h1>'
-                f'<p>{date_text} · light or dark mode: ⋮ menu, top right</p></div>',
-                unsafe_allow_html=True)
-    if st.session_state.demo:
-        message, button = st.columns([5, 1], vertical_alignment="center")
-        message.markdown('<p class="swa-demo">You\'re viewing the <b>demo week</b>: invented '
-                         'students and courses, not your own data.</p>', unsafe_allow_html=True)
-        button.button("Exit demo", icon=":material/close:", width="stretch",
-                      on_click=clear_everything)
+    st.markdown(f'<div class="swa-head"><h1>{greeting}, {safe(name)}</h1>'
+                f'<p class="date">{date_text}</p></div>', unsafe_allow_html=True)
+    # The page tabs. The open page is a "primary" button, which app.css draws as an underlined tab.
     with st.container(key="swa_nav"):
         for column, (page, label, icon) in zip(st.columns(len(PAGES)), PAGES):
             active = st.session_state.page == page
             column.button(label, icon=icon, key=f"nav_{page}", width="stretch",
                           type="primary" if active else "secondary",
                           on_click=go_to, args=(page,))
+    if st.session_state.demo:
+        message, button = st.columns([5, 1], vertical_alignment="center")
+        message.markdown('<p class="swa-demo">You\'re viewing the <b>demo week</b>: invented '
+                         'students and courses, not your own data.</p>', unsafe_allow_html=True)
+        button.button("Exit demo", icon=":material/close:", width="stretch",
+                      on_click=clear_everything)
     st.write("")
 
 
 # ----------------------------------------------------------------------------
-# Home: welcome steps (no data yet) or the three dashboard cards
+# Home: welcome steps (no data yet) or the week as three ruled lines
 # ----------------------------------------------------------------------------
 
+def steps_html(steps):
+    """A numbered list of (title, text) steps."""
+    items = "".join(f"<li><b>{title}.</b> {text}</li>" for title, text in steps)
+    return f'<ol class="swa-steps">{items}</ol>'
+
+
 def draw_welcome():
-    st.subheader("Welcome! Let's set up your week", anchor=False)
+    st.header("Welcome! Let's set up your week", anchor=False)
     st.write("This tool answers three questions in one place: when can my group meet, "
              "what is due next, and how many classes can I still miss?")
-    steps = [("1", "Log in once", "Your student ID gets your timetable, attendance and deadlines."),
-             ("2", "Or upload files", "A timetable screenshot and the Smart LMS calendar (.ics)."),
-             ("3", "Add your teammates", "Upload their timetable files in the Meet page.")]
-    for column, (number, title, text) in zip(st.columns(3), steps):
-        column.markdown(f'<div class="swa-step"><span class="num">{number}</span><br>'
-                        f'<b>{title}</b><p>{text}</p></div>', unsafe_allow_html=True)
+    steps = [("Log in once", "Your student ID gets your timetable, attendance and deadlines."),
+             ("Or upload files", "A timetable screenshot and the Smart LMS calendar (.ics)."),
+             ("Add your teammates", "Upload their timetable files in the Meet page.")]
+    with st.container(key="swa_sheet_welcome"):
+        st.markdown(steps_html(steps), unsafe_allow_html=True)
     st.write("")
     left, right, _ = st.columns([1, 1, 2])
     left.button("Try the demo week", icon=":material/play_arrow:", type="primary",
@@ -291,7 +261,7 @@ def meet_card():
     if everyone:
         slot = everyone[0]
         return dict(card, big=f'{slot["day"]} {core.format_time(slot["start"])}',
-                    badge=(f'Everyone free · {core.format_duration(slot["minutes"])}', "green"),
+                    badge=(f'Everyone free, {core.format_duration(slot["minutes"])}', "green"),
                     sub=f'{len(everyone)} times work for all {len(group)} people')
     if almost:
         slot = almost[0]
@@ -313,7 +283,7 @@ def deadline_card():
     urgent = sum(item["level"] == "URGENT" for item in upcoming)
     return dict(card, big=first["title"],
                 badge=(core.time_left_text(first["hours_left"]), DEADLINE_COLOURS[first["level"]]),
-                sub=f'{first["course"]} · {urgent} due within 2 days')
+                sub=[first["course"], f"{urgent} due within 2 days"])
 
 
 def attendance_card():
@@ -332,15 +302,20 @@ def attendance_card():
                 sub=f'Most at risk: {worst["course"]}')
 
 
-def draw_card(column, card):
+def draw_ledger_line(card):
+    """One line of the week: what it is about, the answer, its status, and the page that explains it."""
     text, colour = card["badge"]
-    with column:
-        st.markdown(card["label"])
-        st.markdown(f'<div class="swa-card"><p class="big">{safe(card["big"])}</p>'
-                    f'{badge(text, colour)}<p class="sub">{safe(card["sub"])}</p></div>',
-                    unsafe_allow_html=True)
-        st.button(card["button"], key=f'card_{card["label"]}', icon=":material/arrow_forward:",
-                  width="stretch", on_click=go_to, args=(card["page"],))
+    title = card["label"].split(": ", 1)[-1]          # the label without its icon
+    subs = card["sub"] if isinstance(card["sub"], list) else [card["sub"]]
+    notes = "".join(f"<span>{safe(sub)}</span>" for sub in subs if sub)
+    with st.container(key=f'swa_ledger_{card["page"]}_{title.split()[0].lower()}'):
+        words, action = st.columns([4, 1], vertical_alignment="center")
+        words.markdown(f'<div class="swa-entry"><p class="label">{safe(title)}</p>'
+                       f'<p class="value">{safe(card["big"])}</p>'
+                       f'<p class="note">{badge(text, colour)}{notes}</p></div>',
+                       unsafe_allow_html=True)
+        action.button(card["button"], key=f'card_{card["label"]}', width="stretch",
+                      on_click=go_to, args=(card["page"],))
 
 
 def draw_heads_up():
@@ -365,8 +340,9 @@ def draw_home():
         draw_welcome()
         return
     draw_heads_up()
-    for column, card in zip(st.columns(3), (meet_card(), deadline_card(), attendance_card())):
-        draw_card(column, card)
+    with st.container(key="swa_sheet_week"):
+        for card in (meet_card(), deadline_card(), attendance_card()):
+            draw_ledger_line(card)
 
 
 # ----------------------------------------------------------------------------
@@ -393,7 +369,7 @@ def week_grid_html(timetables, days, earliest, latest):
             rows.append(f'<td class="{kind}">{text}</td>')
         rows.append("</tr>")
     rows.append("</table>")
-    return "".join(rows)
+    return '<div class="swa-scroll">' + "".join(rows) + "</div>"
 
 
 # File names from phones and screenshot tools say nothing about the person.
@@ -473,108 +449,125 @@ def remove_member(name):
 
 def draw_group_members():
     """Every member with a name box, where the timetable came from, and a remove button."""
-    with st.container(border=True):
-        st.markdown("**Your group** (type in a box to change a name)")
+    with st.container(key="swa_sheet_group"):
+        st.subheader("Your group", anchor=False)
+        st.caption("Type in a box to change a name.")
         problem = st.session_state.pop("member_problem", None)
         if problem:
             st.error(problem)
-        for name, blocks in list(st.session_state.group.items()):
+        for index, (name, blocks) in enumerate(list(st.session_state.group.items())):
             key = f"rename_{name}"
             if key not in st.session_state:
                 st.session_state[key] = name
             is_me = name == st.session_state.my_name
-            name_box, info, remove = st.columns([3, 3, 2], vertical_alignment="center")
-            name_box.text_input(f"Name of {name}", key=key, on_change=rename_member, args=(name,),
-                                label_visibility="collapsed")
             source = st.session_state.member_sources.get(name)
-            details = [f"{len(blocks)} classes"] + (["you"] if is_me else []) + \
-                      ([f"from {source}"] if source else [])
-            info.caption(" · ".join(details))
-            if not is_me:
-                remove.button(f"Remove {name}", key=f"remove_{name}", icon=":material/delete:",
-                              on_click=remove_member, args=(name,))
+            details = [f"{len(blocks)} classes"] + (["you"] if is_me else [])
+            details += [f"from {source}"] if source else []
+            with st.container(key=f"swa_member_{index}"):
+                st.text_input(f"Name of {name}", key=key, on_change=rename_member, args=(name,),
+                              label_visibility="collapsed")
+                st.caption(", ".join(details))
+                if not is_me:
+                    st.button(f"Remove {name}", key=f"remove_{name}", icon=":material/delete:",
+                              type="tertiary", on_click=remove_member, args=(name,))
 
 
-def draw_slot_cards(slots):
-    for column, slot in zip(st.columns(3), slots[:3]):
-        column.markdown(f'<div class="swa-card" style="min-height:0">'
-                        f'<p class="label">{slot["day"]}</p>'
-                        f'<p class="big">{core.format_time(slot["start"])} - {core.format_time(slot["end"])}</p>'
-                        f'{badge(core.format_duration(slot["minutes"]), "green")}</div>',
-                        unsafe_allow_html=True)
+def slots_table_html(slots, with_busy=False):
+    """Meeting times as a ruled table: day, time, length (and who is busy, for second choices)."""
+    head = "<th>Day</th><th>Time</th><th>Length</th>" + ("<th>Busy</th>" if with_busy else "")
+    rows = []
+    for slot in slots:
+        cells = (f'<td>{slot["day"]}</td>'
+                 f'<td class="figure">{core.format_time(slot["start"])} - {core.format_time(slot["end"])}</td>'
+                 f'<td>{core.format_duration(slot["minutes"])}</td>')
+        if with_busy:
+            cells += f'<td>{safe(slot["busy"][0])}</td>'
+        rows.append(f"<tr>{cells}</tr>")
+    return f'<table class="swa-table"><thead><tr>{head}</tr></thead><tbody>{"".join(rows)}</tbody></table>'
 
 
-def draw_meet_page():
-    st.subheader("When can the group meet?", anchor=False)
-    add_team_uploads()
-    if st.session_state.group:
-        draw_group_members()
-    group = st.session_state.group
-    if len(group) < 2:
-        st.info("Add at least two timetables: yours in **My data** and your teammates' above.",
-                icon=":material/info:")
-        return
-
-    hours = [f"{hour:02d}:00" for hour in range(7, 24)]
-    with st.container(border=True):
-        first, second, third, fourth = st.columns(4)
-        earliest = first.selectbox("Earliest start", hours, index=hours.index("09:00"))
-        latest = second.selectbox("Latest end", hours, index=hours.index("18:00"))
-        min_minutes = third.selectbox("Meeting length (minutes)", [30, 60, 90, 120, 180], index=1)
-        weekend = fourth.toggle("Include Saturday", value=False)
-    days = core.DAYS[:6] if weekend else core.DAYS[:5]
-
+def draw_meeting_times(group, days, earliest, latest, min_minutes):
+    """The best times, or the second choices, and the week grid. Returns the times for everyone."""
     try:
         everyone, almost = core.find_meeting_slots(group, earliest, latest, min_minutes, days)
     except core.InputError as problem:
         st.error(str(problem))
-        return
-
-    if everyone:
-        st.markdown(f"**Best times for everyone** ({len(everyone)} found)")
-        draw_slot_cards(everyone)
-        if len(everyone) > 3:
-            with st.expander(f"Show all {len(everyone)} times"):
-                for slot in everyone:
-                    st.write(f'{slot["day"]} {core.format_time(slot["start"])} - '
-                             f'{core.format_time(slot["end"])} ({core.format_duration(slot["minutes"])})')
-    else:
-        st.warning("No time works for everyone with these settings.", icon=":material/warning:")
-        if almost:
-            st.markdown("**Second choice: times when only one person is busy**")
-            for slot in almost[:5]:
-                st.write(f'{slot["day"]} {core.format_time(slot["start"])} - {core.format_time(slot["end"])} '
-                         f'({core.format_duration(slot["minutes"])}), busy: {slot["busy"][0]}')
+        return None
+    with st.container(key="swa_sheet_times"):
+        if everyone:
+            st.subheader(f"Best times for everyone ({len(everyone)} found)", anchor=False)
+            st.markdown(slots_table_html(everyone[:3]), unsafe_allow_html=True)
+            if len(everyone) > 3:
+                with st.expander(f"Show all {len(everyone)} times"):
+                    st.markdown(slots_table_html(everyone), unsafe_allow_html=True)
         else:
-            st.write("Try a shorter meeting, a longer day or Saturday.")
+            st.warning("No time works for everyone with these settings.", icon=":material/warning:")
+            if almost:
+                st.subheader("Second choice: times when only one person is busy", anchor=False)
+                st.markdown(slots_table_html(almost[:5], with_busy=True), unsafe_allow_html=True)
+            else:
+                st.write("Try a shorter meeting, a longer day or Saturday.")
+    with st.container(key="swa_sheet_grid"):
+        st.subheader("The week at a glance", anchor=False)
+        st.markdown('<p class="swa-legend"><span class="swa-key free">free</span> '
+                    '<span class="swa-key one">one person busy</span> '
+                    '<span class="swa-key many">2+ busy</span></p>', unsafe_allow_html=True)
+        st.markdown(week_grid_html(group, days, earliest, latest), unsafe_allow_html=True)
+    return everyone
 
-    st.markdown("**The week at a glance** " + badge("free", "green") + " " + badge("one person busy", "amber")
-                + " " + badge("2+ busy", "blue"), unsafe_allow_html=True)
-    st.markdown(week_grid_html(group, days, earliest, latest), unsafe_allow_html=True)
-    st.write("")
-    st.markdown("**Message for the group chat** (use the copy button)")
-    st.code(core.group_message(everyone), language="text")
+
+def draw_meet_page():
+    st.header("When can the group meet?", anchor=False)
+    side, main = st.columns([1, 2.2], gap="large")
+    with side:
+        add_team_uploads()
+        if st.session_state.group:
+            draw_group_members()
+    group = st.session_state.group
+    with main:
+        if len(group) < 2:
+            st.info("Add at least two timetables: yours in **My data** and your teammates' "
+                    "with **Add teammates' timetables**.",
+                    icon=":material/info:")
+            return
+        hours = [f"{hour:02d}:00" for hour in range(7, 24)]
+        with st.container(key="swa_settings"):
+            first, second, third, fourth = st.columns([1, 1, 1.4, 1.4], vertical_alignment="bottom")
+            earliest = first.selectbox("Earliest start", hours, index=hours.index("09:00"))
+            latest = second.selectbox("Latest end", hours, index=hours.index("18:00"))
+            min_minutes = third.selectbox("Meeting length (minutes)", [30, 60, 90, 120, 180], index=1)
+            weekend = fourth.toggle("Include Saturday", value=False)
+        days = core.DAYS[:6] if weekend else core.DAYS[:5]
+        everyone = draw_meeting_times(group, days, earliest, latest, min_minutes)
+        if everyone is None:
+            return
+        st.markdown("**Message for the group chat** (use the copy button)")
+        st.code(core.group_message(everyone), language="text")
 
 
 # ----------------------------------------------------------------------------
 # Deadlines page
 # ----------------------------------------------------------------------------
 
-def draw_deadline_row(item):
+def deadline_line_html(item):
+    """One deadline: its title and course, when it is due, and how much time is left."""
     left = "overdue" if item["level"] == "OVERDUE" else core.time_left_text(item["hours_left"])
-    notes = [f'{item["course"]} · due {item["due"].strftime("%a %d %b, %H:%M")}']
+    meta = [item["course"], f'Due {item["due"].strftime("%a %d %b, %H:%M")}']
+    notes = []
     if "free_hours" in item:
-        notes.append(f'{item["free_hours"]} free daytime hours before it (classes removed)')
+        notes.append(f'{item["free_hours"]} free daytime hours before it (classes removed).')
     if item["midnight"] and item["level"] != "OVERDUE":
-        notes.append("due at midnight, so finish it the evening before")
+        notes.append("Due at midnight, so finish it the evening before.")
     colour = DEADLINE_COLOURS[item["level"]]
-    st.markdown(f'<div class="swa-row" style="border-left:6px solid {BAR_COLOURS[colour]};">'
-                f'<p class="title">{safe(item["title"])} &nbsp;{badge(left, colour)}</p>'
-                f'<p class="meta">{safe(" · ".join(notes))}</p></div>', unsafe_allow_html=True)
+    meta_html = "".join(f"<span>{safe(part)}</span>" for part in meta)
+    notes_html = f'<p class="meta">{safe(" ".join(notes))}</p>' if notes else ""
+    return (f'<div class="swa-line"><div><p class="title">{safe(item["title"])}</p>'
+            f'<p class="meta">{meta_html}</p>{notes_html}</div>'
+            f'<div class="side">{badge(left, colour)}</div></div>')
 
 
 def draw_deadlines_page():
-    st.subheader("What is due next?", anchor=False)
+    st.header("What is due next?", anchor=False)
     if not st.session_state.deadlines:
         st.info("No deadlines yet. The quickest way: log in with your student ID in **My data**.\n\n"
                 "Or add the calendar file by hand:\n"
@@ -584,29 +577,31 @@ def draw_deadlines_page():
         st.button("Go to My data", icon=":material/upload_file:", on_click=go_to, args=("data",))
         return
     rated = rated_deadlines()
-    for column, level in zip(st.columns(4), DEADLINE_LABELS):
-        count = sum(item["level"] == level for item in rated)
-        column.markdown(f'<div class="swa-tile"><p class="num">{count}</p>'
-                        f'<p class="label">{DEADLINE_LABELS[level]}</p></div>', unsafe_allow_html=True)
-    st.write("")
+    counts = "".join(f'<div><dt>{DEADLINE_LABELS[level]}</dt>'
+                     f'<dd>{sum(item["level"] == level for item in rated)}</dd></div>'
+                     for level in DEADLINE_LABELS)
+    st.markdown(f'<dl class="swa-stats">{counts}</dl>', unsafe_allow_html=True)
     show_old = st.toggle("Show overdue entries", value=False)
-    for item in rated:
-        if item["level"] == "OVERDUE" and not show_old:
-            continue
-        draw_deadline_row(item)
+    lines = [deadline_line_html(item) for item in rated
+             if item["level"] != "OVERDUE" or show_old]
+    if lines:
+        with st.container(key="swa_sheet_deadlines"):
+            st.markdown(f'<div class="swa-lines">{"".join(lines)}</div>', unsafe_allow_html=True)
 
 
 # ----------------------------------------------------------------------------
 # Attendance page
 # ----------------------------------------------------------------------------
 
-def draw_attendance_row(result):
+def attendance_line_html(result):
+    """One course: its status, how many absences are left, a bar of the absences used, and the counts."""
     colour = ATTENDANCE_COLOURS[result["status"]]
     label = badge(ATTENDANCE_LABELS[result["status"]], colour)
+    head = (f'<div><p class="title">{safe(result["course"])}</p></div>'
+            f'<div class="side">{label}</div>')
     if result["status"] == "NO DATA":
-        st.markdown(f'<div class="swa-row"><p class="title">{safe(result["course"])} &nbsp;{label}</p>'
-                    f'<p class="meta">No class sessions recorded yet.</p></div>', unsafe_allow_html=True)
-        return
+        return (f'<div class="swa-line">{head}'
+                f'<p class="meta wide">No class sessions recorded yet.</p></div>')
     used = result["counted_absences"] / result["allowed"] if result["allowed"] else 1.0
     width = int(min(1.0, max(0.0, used)) * 100)
     lates = result["lates_to_next"]
@@ -614,15 +609,15 @@ def draw_attendance_row(result):
                f'({result["absent"]} absent, {result["late"]} late, {result["early"]} left early, '
                f'{result["excused"]} excused). {lates} more {"late arrival" if lates == 1 else "late arrivals"} '
                f'until the next one counts as an absence.')
-    st.markdown(f'<div class="swa-row"><div class="head"><p class="title">{safe(result["course"])} '
-                f'&nbsp;{label}</p><p class="title">{safe(miss_text(result))}</p></div>'
-                f'<div class="swa-bar" role="img" aria-label="{width}% of allowed absences used">'
-                f'<span style="width:{width}%;background:{BAR_COLOURS[colour]};"></span></div>'
-                f'<p class="meta">{safe(details)}</p></div>', unsafe_allow_html=True)
+    return (f'<div class="swa-line">{head}'
+            f'<p class="wide remain">{safe(miss_text(result))}</p>'
+            f'<div class="swa-bar wide" role="img" aria-label="{width}% of allowed absences used">'
+            f'<span class="{colour}" style="width:{width}%"></span></div>'
+            f'<p class="meta wide">{safe(details)}</p></div>')
 
 
 def draw_attendance_page():
-    st.subheader("How many classes can I still miss?", anchor=False)
+    st.header("How many classes can I still miss?", anchor=False)
     if not st.session_state.attendance:
         st.info("No attendance added yet. Log in to the attendance site in **My data**, "
                 "or try the demo week.", icon=":material/info:")
@@ -633,11 +628,12 @@ def draw_attendance_page():
                  "sessions. Three late arrivals (or early leaves) count as one absence. "
                  "Excused absences do not count.")
     results = checked_attendance()
-    for result in results:
-        draw_attendance_row(result)
     if any(r["status"] == "FAILED" for r in results):
         st.error("A course is over the limit. Talk to your professor as soon as possible.",
                  icon=":material/error:")
+    with st.container(key="swa_sheet_attendance"):
+        lines = "".join(attendance_line_html(result) for result in results)
+        st.markdown(f'<div class="swa-lines">{lines}</div>', unsafe_allow_html=True)
 
 
 # ----------------------------------------------------------------------------
@@ -650,10 +646,9 @@ def draw_data_status():
              ("Smart LMS calendar", bool(st.session_state.deadlines)),
              ("Attendance", bool(st.session_state.attendance)),
              ("Teammates", len(st.session_state.group) >= 2)]
-    for column, (label, done) in zip(st.columns(4), items):
-        mark = badge("Added", "green") if done else badge("Not yet", "grey")
-        column.markdown(f'<div class="swa-tile"><p class="label">{label}</p>{mark}</div>',
-                        unsafe_allow_html=True)
+    checks = "".join(f'<li>{label} {badge("Added", "green") if done else badge("Not yet", "grey")}</li>'
+                     for label, done in items)
+    st.markdown(f'<ul class="swa-checks">{checks}</ul>', unsafe_allow_html=True)
 
 
 def get_from_attendance_site(student_id, password):
@@ -698,8 +693,8 @@ def show_login_problems(problems):
 
 
 def draw_login_box():
-    with st.container(border=True):
-        st.markdown("**Option 1: log in once, get everything**")
+    with st.container(key="swa_sheet_login"):
+        st.subheader("Option 1: log in once, get everything", anchor=False)
         st.caption("Gets your timetable and attendance from att.wsu.ac.kr and your deadlines "
                    "from smart.wsu.ac.kr and nsmart.wsu.ac.kr. Your password is used for these requests only and is never saved.")
         with st.form("login_form", clear_on_submit=True, border=False):
@@ -734,8 +729,8 @@ def load_upload(upload, label, loader, message):
 
 def draw_upload_box():
     upload_round = st.session_state.upload_round
-    with st.container(border=True):
-        st.markdown("**Option 2: upload your files**")
+    with st.container(key="swa_sheet_upload"):
+        st.subheader("Option 2: upload your files", anchor=False)
         typed_name = st.text_input("Your name", value=st.session_state.my_name)
 
         def save_timetable(data, file_name):
@@ -765,10 +760,10 @@ def draw_upload_box():
 
 
 def draw_data_page():
-    st.subheader("My data", anchor=False)
+    st.header("My data", anchor=False)
     draw_data_status()
     st.write("")
-    left, right = st.columns(2)
+    left, right = st.columns(2, gap="large")
     with left:
         draw_login_box()
     with right:
@@ -793,16 +788,15 @@ def draw_data_page():
 # ----------------------------------------------------------------------------
 
 def draw_help_page():
-    st.subheader("How to use this tool", anchor=False)
-    steps = [("1", "Add your data", "In My data, log in once with your student ID (timetable, "
+    st.header("How to use this tool", anchor=False)
+    steps = [("Add your data", "In My data, log in once with your student ID (timetable, "
               "attendance and deadlines), or upload a timetable screenshot and the Smart LMS calendar (.ics)."),
-             ("2", "Add your team", "Every teammate saves a timetable file or a screenshot and "
+             ("Add your team", "Every teammate saves a timetable file or a screenshot and "
               "sends it to you. Upload them in Meet. Share files, never passwords."),
-             ("3", "Check your week", "Home shows the best meeting time, the next deadline and "
-              "the course closest to the absence limit. Click a card for details.")]
-    for column, (number, title, text) in zip(st.columns(3), steps):
-        column.markdown(f'<div class="swa-step"><span class="num">{number}</span><br>'
-                        f'<b>{title}</b><p>{text}</p></div>', unsafe_allow_html=True)
+             ("Check your week", "Home shows the best meeting time, the next deadline and "
+              "the course closest to the absence limit. Open a line for the details.")]
+    with st.container(key="swa_sheet_help"):
+        st.markdown(steps_html(steps), unsafe_allow_html=True)
     st.write("")
     st.info("Light, dark or system mode: open the ⋮ menu in the top right corner and pick "
             "System, Light or Dark. System follows your computer's setting.",
@@ -821,6 +815,6 @@ DRAW_PAGE = {"home": draw_home, "meet": draw_meet_page, "deadlines": draw_deadli
              "attendance": draw_attendance_page, "data": draw_data_page, "help": draw_help_page}
 
 start_memory()
-st.markdown(STYLE, unsafe_allow_html=True)
+draw_styles()
 draw_top_bar()
 DRAW_PAGE.get(st.session_state.page, draw_home)()

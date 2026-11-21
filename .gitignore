@@ -14,3 +14,6 @@ packaging/app_icon.ico
 
 # Local tool settings
 .claude/
+
+# Hallmark design records (before/after notes, scaffold, log)
+.hallmark/

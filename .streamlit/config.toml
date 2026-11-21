@@ -1,20 +1,65 @@
-# Colours of the browser app: deep blue with warm accents.
-# There is a light and a dark version. Streamlit follows the computer's
-# setting (system mode) until the student picks Light or Dark in the app.
+# Colours of the browser app: warm paper, ink and one deep coral (the "Coral" look).
+# The same colours are in styles/tokens.css; these set Streamlit's own boxes,
+# buttons and fields. There is a light and a dark version. Streamlit follows the
+# computer's setting (system mode) until the student picks Light or Dark in the app.
+# Fonts are the computer's own, so nothing is downloaded from a font server.
 [theme]
-primaryColor = "#185FA5"
+font = "'Segoe UI Variable Text', 'Segoe UI', system-ui, -apple-system, sans-serif"
+headingFont = "'Segoe UI Variable Display', 'Segoe UI', system-ui, -apple-system, sans-serif"
+codeFont = "'Cascadia Mono', Consolas, ui-monospace, monospace"
+headingFontSizes = ["1.728rem", "1.44rem", "1rem", "1rem", "0.875rem", "0.875rem"]
+headingFontWeights = [600, 600, 600, 600, 600, 600]
+baseRadius = "6px"
+buttonRadius = "8px"
+showWidgetBorder = true
 
 [theme.light]
-primaryColor = "#185FA5"
-backgroundColor = "#F7F9FC"
-secondaryBackgroundColor = "#E6F1FB"
-textColor = "#0C2340"
+primaryColor = "#BB3D31"
+backgroundColor = "#F8F4F1"
+secondaryBackgroundColor = "#F1ECE8"
+textColor = "#1D1614"
+borderColor = "#C7BFBA"
+linkColor = "#BB3D31"
+codeBackgroundColor = "#F1ECE8"
+redColor = "#AF2C22"
+orangeColor = "#915C08"
+yellowColor = "#915C08"
+greenColor = "#2C6D3E"
+blueColor = "#615955"
+redBackgroundColor = "#FBD8D2"
+orangeBackgroundColor = "#F7DEB5"
+yellowBackgroundColor = "#F7DEB5"
+greenBackgroundColor = "#CEEBCD"
+blueBackgroundColor = "#E8E1DD"
+redTextColor = "#7A1C15"
+orangeTextColor = "#5E3B04"
+yellowTextColor = "#5E3B04"
+greenTextColor = "#1D4A2A"
+blueTextColor = "#1D1614"
 
 [theme.dark]
-primaryColor = "#85B7EB"
-backgroundColor = "#0B1A2E"
-secondaryBackgroundColor = "#132A47"
-textColor = "#E6F1FB"
+primaryColor = "#EA8470"
+backgroundColor = "#171311"
+secondaryBackgroundColor = "#211C19"
+textColor = "#EEEAE7"
+borderColor = "#48413E"
+linkColor = "#EA8470"
+codeBackgroundColor = "#211C19"
+redColor = "#EF8070"
+orangeColor = "#E7B369"
+yellowColor = "#E7B369"
+greenColor = "#7CC58C"
+blueColor = "#ABA39E"
+redBackgroundColor = "#502923"
+orangeBackgroundColor = "#473418"
+yellowBackgroundColor = "#473418"
+greenBackgroundColor = "#243C25"
+blueBackgroundColor = "#2B2522"
+redTextColor = "#F6C4BB"
+orangeTextColor = "#F2D6A8"
+yellowTextColor = "#F2D6A8"
+greenTextColor = "#BFE3C4"
+blueTextColor = "#EEEAE7"
 
 # Only this computer can open the app (not other people on the same Wi-Fi),
 # and Streamlit sends no usage statistics.

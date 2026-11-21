@@ -19,6 +19,9 @@ datas += [
     (os.path.join(project, "project_code.py"), "."),
     (os.path.join(project, ".streamlit", "config.toml"), ".streamlit"),
 ]
+# The look of the app (colours, type, layout): styles/tokens.css, base.css, app.css
+datas += [(os.path.join(project, "styles", f), "styles")
+          for f in ("tokens.css", "base.css", "app.css")]
 # The demo week reads its invented students from test_cases/case1_normal_week
 for folder, _, files in os.walk(os.path.join(project, "test_cases")):
     target = os.path.relpath(folder, project)

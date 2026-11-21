@@ -2,7 +2,7 @@
 ; Installs for the current user only, so no administrator password is needed.
 
 #define AppName "Study Week Assistant"
-#define AppVersion "1.1.2"
+#define AppVersion "1.2.0"
 #define AppExe "StudyWeekAssistant.exe"
 ; Same name as APP_MUTEX_NAME in launcher.py
 #define AppMutexName "StudyWeekAssistant_6E0F3C2A"
