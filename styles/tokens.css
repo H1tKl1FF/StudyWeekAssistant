@@ -1,4 +1,5 @@
-/* Coral tokens for Study Week Assistant (Hallmark scaffold, adapted for an app screen).
+/* White and dark blue tokens for Study Week Assistant (Hallmark scaffold, adapted for an app screen;
+   the layout and type came from the Coral theme, the colours are the student group's choice).
    Fonts are the computer's own, so the app never asks a font server for anything. */
 :root {
   color-scheme: light;
@@ -10,18 +11,18 @@
   --container: 1120px; --gutter: 64px; --gap-columns: 32px;
   --z-base: 1; --z-raised: 10; --z-dropdown: 100; --z-sticky: 200; --z-sticky-nav: 300; --z-modal: 400; --z-toast: 500; --z-tooltip: 600;
 
-  --color-paper: oklch(97% 0.006 55); --color-paper-2: oklch(94.5% 0.007 55); --color-paper-3: oklch(91.5% 0.009 55);
-  --color-ink: oklch(21% 0.012 38); --color-ink-2: oklch(29% 0.013 40); --color-muted: oklch(47% 0.013 45);
-  --color-rule: oklch(87% 0.009 55); --color-rule-2: oklch(81% 0.011 55);
-  --color-accent: oklch(74% 0.125 30); --color-accent-ink: oklch(21% 0.012 38); --color-accent-2: oklch(54% 0.165 29); --color-focus: oklch(54% 0.17 30);
-  --color-cotton: oklch(98.8% 0.0045 80); --color-print: oklch(23% 0.012 38);
-  --color-board: oklch(22% 0.011 40); --color-board-type: oklch(96.5% 0.006 70); --color-board-hover: oklch(32% 0.013 40);
+  --color-paper: oklch(100% 0 0); --color-paper-2: oklch(97% 0.008 255); --color-paper-3: oklch(94% 0.013 255);
+  --color-ink: oklch(26% 0.075 262); --color-ink-2: oklch(34% 0.08 262); --color-muted: oklch(49% 0.035 258);
+  --color-rule: oklch(91% 0.012 255); --color-rule-2: oklch(84% 0.018 255);
+  --color-accent: oklch(62% 0.15 258); --color-accent-ink: oklch(26% 0.075 262); --color-accent-2: oklch(40% 0.14 262); --color-focus: oklch(48% 0.17 262);
+  --color-cotton: oklch(100% 0 0); --color-print: oklch(26% 0.075 262);
+  --color-board: oklch(29% 0.09 262); --color-board-type: oklch(98% 0.005 255); --color-board-hover: oklch(37% 0.11 262);
   --color-error: oklch(52% 0.19 27); --color-success: oklch(50% 0.12 150);
   /* States: the text colour of a status, and the soft fill of a week-grid cell */
-  --color-ok: oklch(48% 0.1 150); --color-warn: oklch(52% 0.11 70); --color-danger: oklch(50% 0.17 29); --color-quiet: oklch(47% 0.013 45);
-  --color-ok-tint: oklch(91% 0.05 145); --color-warn-tint: oklch(91% 0.06 80); --color-busy-tint: oklch(87% 0.009 55);
+  --color-ok: oklch(48% 0.1 150); --color-warn: oklch(52% 0.11 70); --color-danger: oklch(50% 0.17 29); --color-quiet: oklch(49% 0.035 258);
+  --color-ok-tint: oklch(93% 0.045 150); --color-warn-tint: oklch(93% 0.055 85); --color-busy-tint: oklch(91% 0.015 255);
 
-  --shade: 32% 0.03 50; --lit: 100% 0.005 80;
+  --shade: 30% 0.06 262; --lit: 100% 0 0;
   --font-display: "Segoe UI Variable Display", "Segoe UI", system-ui, -apple-system, sans-serif;
   --font-body: "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, sans-serif;
   --font-outlier: "Cascadia Mono", Consolas, ui-monospace, monospace;
@@ -31,16 +32,16 @@
   --tracking-display: -0.02em; --display-weight: 600;
 }
 
-/* Dark mode: the same desk at night. The app sets data-swa-mode="dark" when Streamlit is in dark mode. */
+/* Dark mode: a deep navy page with white type. The app sets data-swa-mode="dark" when Streamlit is in dark mode. */
 :root[data-swa-mode="dark"] {
   color-scheme: dark;
-  --color-paper: oklch(19% 0.008 45); --color-paper-2: oklch(23% 0.009 45); --color-paper-3: oklch(27% 0.01 45);
-  --color-ink: oklch(94% 0.006 70); --color-ink-2: oklch(86% 0.008 60); --color-muted: oklch(72% 0.012 55);
-  --color-rule: oklch(31% 0.01 45); --color-rule-2: oklch(38% 0.011 45);
-  --color-accent: oklch(74% 0.125 30); --color-accent-ink: oklch(21% 0.012 38); --color-accent-2: oklch(72% 0.13 32); --color-focus: oklch(72% 0.14 30);
-  --color-cotton: oklch(22.5% 0.009 50); --color-print: oklch(94% 0.006 70);
-  --color-board: oklch(92% 0.008 70); --color-board-type: oklch(21% 0.012 38); --color-board-hover: oklch(84% 0.01 70);
-  --color-ok: oklch(76% 0.11 150); --color-warn: oklch(80% 0.11 75); --color-danger: oklch(72% 0.14 29); --color-quiet: oklch(72% 0.012 55);
-  --color-ok-tint: oklch(33% 0.05 145); --color-warn-tint: oklch(34% 0.05 75); --color-busy-tint: oklch(31% 0.01 45);
-  --shade: 5% 0.01 40; --lit: 40% 0.01 60;
+  --color-paper: oklch(19% 0.045 262); --color-paper-2: oklch(23% 0.05 262); --color-paper-3: oklch(27% 0.055 262);
+  --color-ink: oklch(97% 0.008 255); --color-ink-2: oklch(90% 0.015 255); --color-muted: oklch(78% 0.03 255);
+  --color-rule: oklch(31% 0.045 262); --color-rule-2: oklch(39% 0.05 262);
+  --color-accent: oklch(70% 0.13 255); --color-accent-ink: oklch(19% 0.045 262); --color-accent-2: oklch(78% 0.11 255); --color-focus: oklch(76% 0.13 255);
+  --color-cotton: oklch(23% 0.052 262); --color-print: oklch(97% 0.008 255);
+  --color-board: oklch(96% 0.01 255); --color-board-type: oklch(24% 0.07 262); --color-board-hover: oklch(88% 0.025 255);
+  --color-ok: oklch(78% 0.12 150); --color-warn: oklch(82% 0.11 80); --color-danger: oklch(74% 0.14 25); --color-quiet: oklch(78% 0.03 255);
+  --color-ok-tint: oklch(34% 0.05 150); --color-warn-tint: oklch(35% 0.05 80); --color-busy-tint: oklch(33% 0.04 262);
+  --shade: 5% 0.03 262; --lit: 40% 0.05 262;
 }
