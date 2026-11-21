@@ -2,8 +2,10 @@
 ; Installs for the current user only, so no administrator password is needed.
 
 #define AppName "Study Week Assistant"
-#define AppVersion "1.1.0"
+#define AppVersion "1.1.1"
 #define AppExe "StudyWeekAssistant.exe"
+; Same name as APP_MUTEX_NAME in launcher.py
+#define AppMutexName "StudyWeekAssistant_6E0F3C2A"
 
 [Setup]
 AppId={{6E0F3C2A-5B7D-4E61-9A3F-2C8D1B4E7F90}
@@ -65,14 +67,32 @@ begin
        '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
 end;
 
+{ The app marks itself as running with this name (see packaging/launcher.py).
+  If PowerShell is blocked on the computer, the step above cannot close the app,
+  but this check still notices it, so Setup never installs over an open app. }
+function AppStillOpen(): Boolean;
+begin
+  Result := CheckForMutexes('{#AppMutexName}');
+end;
+
 function PrepareToInstall(var NeedsRestart: Boolean): String;
 begin
   CloseRunningCopy(ExpandConstant('{app}'));
-  Result := '';
+  if AppStillOpen() then
+    Result := '{#AppName} is still open. Close its black window, then run Setup again.'
+  else
+    Result := '';
 end;
 
-function InitializeUninstall(): Boolean;
+{ Close the app only after the student has said Yes to "remove the app?" }
+procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
 begin
-  CloseRunningCopy(ExpandConstant('{app}'));
-  Result := True;
+  if CurUninstallStep = usUninstall then
+  begin
+    CloseRunningCopy(ExpandConstant('{app}'));
+    while AppStillOpen() and
+          (MsgBox('{#AppName} is still open. Close its black window, then click Retry.',
+                  mbError, MB_RETRYCANCEL) = IDRETRY) do
+      ;
+  end;
 end;

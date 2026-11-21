@@ -171,7 +171,10 @@ def clear_everything():
 
 
 def current_time():
-    return DEMO_NOW if st.session_state.demo else datetime.now()
+    """Korean time, whatever time zone the laptop is set to (deadlines are in Korean time)."""
+    if st.session_state.demo:
+        return DEMO_NOW
+    return datetime.now(core.KOREA_TIME).replace(tzinfo=None)
 
 
 def has_any_data():
@@ -634,32 +637,44 @@ def draw_data_status():
 
 
 def get_from_attendance_site(student_id, password):
-    """Timetable and attendance from att.wsu.ac.kr."""
+    """Timetable and attendance from att.wsu.ac.kr. Returns the problem text, or None."""
     try:
         with st.spinner("Getting your timetable and attendance..."):
             result = core.fetch_from_site(student_id, password)
     except core.InputError as problem:
-        st.error(f"Attendance site: {problem}")
-        return
+        return f"Attendance site: {problem}"
     name = result["name"] or "Me"
     st.session_state.my_name = name
     st.session_state.group[name] = result["timetable"]
     st.session_state.attendance = result["attendance"]
     st.success(f"Timetable and attendance loaded: {len(result['attendance'])} courses for {name}.")
+    if result["skipped"]:
+        st.info("These courses had no class times or attendance to read and were left out: "
+                + ", ".join(result["skipped"]) + ".")
+    return None
 
 
 def get_from_smart_lms(student_id, password):
-    """Deadlines from smart.wsu.ac.kr and nsmart.wsu.ac.kr, so no calendar file is needed."""
+    """Deadlines from smart.wsu.ac.kr and nsmart.wsu.ac.kr. Returns the problems if both failed."""
     with st.spinner("Getting your deadlines from Smart LMS (smart and nsmart)..."):
         deadlines, problems = core.fetch_all_deadlines(student_id, password)
     if len(problems) == len(core.DEADLINE_SITES):      # neither site worked
-        for problem in problems:
-            st.warning(problem)
-        return
+        return problems
     st.session_state.deadlines = deadlines
     st.success(f"Deadlines loaded from Smart LMS: {len(deadlines)} entries.")
     for problem in problems:                           # the other site still worked
         st.info(problem)
+    return []
+
+
+def show_login_problems(problems):
+    """One box for everything that went wrong, instead of one box per site."""
+    if not problems:
+        return
+    if len(problems) == 1:
+        st.warning(problems[0])
+        return
+    st.error("The sites did not give any data:\n" + "\n".join(f"- {text}" for text in problems))
 
 
 def draw_login_box():
@@ -672,12 +687,17 @@ def draw_login_box():
             student_id = st.text_input("Student ID", autocomplete="off")
             password = st.text_input("Password", type="password", autocomplete="off")
             pressed = st.form_submit_button("Get my data", icon=":material/login:", type="primary")
-        if pressed:
-            if st.session_state.demo:          # never mix the demo students with real data
-                clear_everything()
-                st.session_state.page = "data"
-            get_from_attendance_site(student_id, password)
-            get_from_smart_lms(student_id, password)
+        if not pressed:
+            return
+        if not student_id.strip() or not password:
+            st.error("Type both your student ID and your password.")
+            return
+        if st.session_state.demo:              # never mix the demo students with real data
+            clear_everything()
+            st.session_state.page = "data"
+        problems = [get_from_attendance_site(student_id, password)]
+        problems = [text for text in problems if text] + get_from_smart_lms(student_id, password)
+        show_login_problems(problems)
 
 
 def load_upload(upload, label, loader, message):
@@ -768,7 +788,8 @@ def draw_help_page():
             "System, Light or Dark. System follows your computer's setting.",
             icon=":material/contrast:")
     st.info("Privacy: the app runs on your own computer. Nothing is sent anywhere except the "
-            "login request to the attendance site, and your password is never written to a file.",
+            "login requests to the attendance site (att.wsu.ac.kr) and the two Smart LMS sites "
+            "(smart.wsu.ac.kr and nsmart.wsu.ac.kr), and your password is never written to a file.",
             icon=":material/lock:")
 
 

@@ -112,7 +112,7 @@ pip install -r requirements.txt
 python project_code.py --test
 ```
 
-The last line should say **7 passed, 0 failed**.
+The last line should say **8 passed, 0 failed**.
 
 ### Step 5. Start the app
 
@@ -169,7 +169,7 @@ Yellow "WARNING" lines are normal. Red "ERROR" lines are not (see
 py project_code.py --test
 ```
 
-The last line should say **7 passed, 0 failed**.
+The last line should say **8 passed, 0 failed**.
 
 ### Step 5. Start the app
 
@@ -181,7 +181,9 @@ Type `1` and press `Enter`. The app opens in your browser at
 <http://localhost:8501>. If it does not open by itself, copy that address into
 your browser.
 
-If Windows Firewall asks about Python, click **Allow** (Private networks).
+The app only runs on your own computer, so other people on the same Wi-Fi
+cannot open it. If Windows Firewall still asks about Python, you can click
+**Cancel**.
 
 ---
 

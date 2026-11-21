@@ -15,3 +15,11 @@ primaryColor = "#85B7EB"
 backgroundColor = "#0B1A2E"
 secondaryBackgroundColor = "#132A47"
 textColor = "#E6F1FB"
+
+# Only this computer can open the app (not other people on the same Wi-Fi),
+# and Streamlit sends no usage statistics.
+[server]
+address = "localhost"
+
+[browser]
+gatherUsageStats = false

@@ -87,6 +87,35 @@ class LoginError(InputError):
     """Raised when the attendance site refuses the login."""
 
 
+def reads_site_answer(message):
+    """Mark a function that reads a website's answer.
+
+    If the site changes and sends something of an unexpected shape (a missing
+    key, a list instead of a dictionary, a date we cannot read), the student
+    gets `message` instead of a crash.
+    """
+    def wrap(reader):
+        def careful_reader(*args):
+            try:
+                return reader(*args)
+            except InputError:
+                raise                      # already a message for the student
+            except (KeyError, IndexError, TypeError, AttributeError, ValueError):
+                raise InputError(message)
+        careful_reader.__name__ = reader.__name__
+        careful_reader.__doc__ = reader.__doc__
+        return careful_reader
+    return wrap
+
+
+ATTENDANCE_ANSWER_UNREADABLE = ("The attendance site sent an answer this app could not read. "
+                                "Use a timetable screenshot instead.")
+SMART_ANSWER_UNREADABLE = ("Smart LMS sent an answer this app could not read. "
+                           "Upload the calendar file instead.")
+NSMART_ANSWER_UNREADABLE = ("nsmart.wsu.ac.kr sent an answer this app could not read. "
+                            "Upload the calendar file instead.")
+
+
 # ----------------------------------------------------------------------------
 # PART 2 - SMALL HELPERS FOR TIMES AND DAYS
 # ----------------------------------------------------------------------------
@@ -187,11 +216,11 @@ def load_timetable_csv(source):
         raise InputError("The timetable file needs the columns day,start,end,course. "
                          f"Missing: {', '.join(missing)}.")
     blocks, problems = [], []
-    for line_number, row in enumerate(reader, start=2):
-        row = {(key or "").strip().lower(): (value or "").strip() for key, value in row.items()}
-        if not any(row.values()):
-            continue  # skip blank lines
+    for line_number, raw_row in enumerate(reader, start=2):
         try:
+            row = tidy_csv_row(raw_row, last_column="course")
+            if not any(row.values()):
+                continue  # skip blank lines
             day = parse_day(row["day"])
             start, end = parse_time(row["start"]), parse_time(row["end"])
             if end <= start:
@@ -203,6 +232,23 @@ def load_timetable_csv(source):
     if problems:
         raise InputError("The timetable file has mistakes:\n  " + "\n  ".join(problems))
     return merge_blocks(blocks)
+
+
+def tidy_csv_row(row, last_column=None):
+    """Lower-case the column names and strip the spaces of one CSV row.
+
+    A comma inside a value ("Python, Advanced") makes more values than columns.
+    When that value is the last column we join the pieces back together;
+    anywhere else the row cannot be read and the student gets a message.
+    """
+    extra = [value.strip() for value in row.get(None) or []]
+    tidy = {key.strip().lower(): (value or "").strip() for key, value in row.items() if key is not None}
+    if extra and last_column in tidy:
+        return {**tidy, last_column: ", ".join([tidy[last_column]] + extra)}
+    if extra:
+        raise InputError("this line has more values than there are columns. If a course name "
+                         'has a comma in it, put the name in quotes, like "Python, Advanced".')
+    return tidy
 
 
 def timetable_to_csv(blocks):
@@ -627,11 +673,11 @@ def load_attendance_csv(source):
     if missing:
         raise InputError("The attendance file is missing the columns: " + ", ".join(missing) + ".")
     records, problems = [], []
-    for line_number, row in enumerate(reader, start=2):
-        row = {(key or "").strip().lower(): (value or "").strip() for key, value in row.items()}
-        if not any(row.values()):
-            continue
+    for line_number, raw_row in enumerate(reader, start=2):
         try:
+            row = tidy_csv_row(raw_row)
+            if not any(row.values()):
+                continue
             record = {"course": row["course"] or "Course"}
             for name in needed[1:]:
                 if not row[name].isdigit():
@@ -653,6 +699,7 @@ def load_attendance_csv(source):
 # The password is used once for the login request and is never saved.
 # ----------------------------------------------------------------------------
 
+@reads_site_answer(ATTENDANCE_ANSWER_UNREADABLE)
 def read_login_reply(reply):
     """Check the site's answer to a login and return the student's details."""
     result = (reply.get("xidedu") or {}).get("xmsg")
@@ -673,6 +720,7 @@ def read_login_reply(reply):
             "course_codes": courses}
 
 
+@reads_site_answer(ATTENDANCE_ANSWER_UNREADABLE)
 def read_course_reply(reply):
     """Turn the site's answer for one course into timetable blocks and counts."""
     slots = reply.get("rollbook") or []
@@ -723,7 +771,8 @@ def read_course_reply(reply):
 def fetch_from_site(student_id, password):
     """Log in to the attendance site and collect timetable and attendance.
 
-    Returns {"name", "timetable": [blocks], "attendance": [records]}.
+    Returns {"name", "timetable": [blocks], "attendance": [records],
+             "skipped": [names of courses whose data could not be read]}.
     """
     try:
         import requests
@@ -748,13 +797,21 @@ def fetch_from_site(student_id, password):
                              "connection and try again, or use a screenshot instead.")
 
     login = read_login_reply(ask("iwin_sin", {"duser_id": student_id.strip(), "duser_pw": password}))
-    timetable, attendance = [], []
-    for course_code in login["course_codes"].values():
+    timetable, attendance, skipped = [], [], []
+    for course_name, course_code in login["course_codes"].items():
         reply = ask("iwin_st_chulseokbu", {"dclass": course_code, "duser_id": login["student_id"]})
-        blocks, record = read_course_reply(reply)
-        timetable.extend(blocks)
-        attendance.append(record)
-    return {"name": login["name"], "timetable": merge_blocks(timetable), "attendance": attendance}
+        try:
+            blocks, record = read_course_reply(reply)
+        except InputError:
+            skipped = skipped + [course_name]     # e.g. an online course with no class times
+            continue
+        timetable = timetable + blocks
+        attendance = attendance + [record]
+    if not attendance:
+        raise InputError("The attendance site sent no usable course data. "
+                         "Use a timetable screenshot instead.")
+    return {"name": login["name"], "timetable": merge_blocks(timetable),
+            "attendance": attendance, "skipped": skipped}
 
 
 # ----------------------------------------------------------------------------
@@ -783,6 +840,7 @@ def read_lms_sesskey(page_html):
     return match.group(1)
 
 
+@reads_site_answer(SMART_ANSWER_UNREADABLE)
 def read_lms_events_reply(reply):
     """Turn Smart LMS's list of upcoming activities into deadlines.
 
@@ -864,6 +922,7 @@ def read_canvas_user(page_html):
     return match.group(1)
 
 
+@reads_site_answer(NSMART_ANSWER_UNREADABLE)
 def read_canvas_planner_reply(reply):
     """Turn the nsmart planner list into deadlines, the same shape as load_deadlines()."""
     if not isinstance(reply, list):
@@ -883,6 +942,7 @@ def read_canvas_planner_reply(reply):
     return sorted(deadlines, key=lambda entry: entry["due"])
 
 
+@reads_site_answer(NSMART_ANSWER_UNREADABLE)
 def read_canvas_json(text):
     """Canvas puts 'while(1);' in front of its answers; remove it before reading."""
     return json.loads(text.removeprefix("while(1);"))
