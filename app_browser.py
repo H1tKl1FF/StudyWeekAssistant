@@ -83,6 +83,16 @@ button[kind="primary"]:hover, [data-testid="stBaseButton-primary"]:hover {
 .swa-row {background: rgba(55, 138, 221, 0.05); border: 1px solid rgba(55, 138, 221, 0.30);
           border-radius: 12px; padding: 12px 16px; margin-bottom: 8px; color: inherit;}
 .swa-row .title {font-weight: 600; margin: 0;}
+/* Course name and "N more absences left" share one line, and wrap on phones */
+.swa-row .head {display: flex; flex-wrap: wrap; justify-content: space-between;
+                align-items: center; gap: 2px 12px;}
+/* On phones keep the page buttons in a grid of three instead of seven rows */
+@media (max-width: 640px) {
+  .st-key-swa_nav [data-testid="stHorizontalBlock"] {flex-flow: row wrap; gap: 0.5rem;}
+  .st-key-swa_nav [data-testid="stColumn"] {flex: 1 1 calc(33.3% - 0.5rem) !important;
+                                            min-width: calc(33.3% - 0.5rem) !important;}
+  .st-key-swa_nav button {padding-left: 0.3rem; padding-right: 0.3rem;}
+}
 .swa-row .meta {margin: 4px 0 0 0;}
 .swa-bar {height: 8px; background: rgba(55, 138, 221, 0.18); border-radius: 4px; overflow: hidden;
           margin-top: 8px;}
@@ -216,11 +226,12 @@ def draw_top_bar():
                          'students and courses, not your own data.</p>', unsafe_allow_html=True)
         button.button("Exit demo", icon=":material/close:", width="stretch",
                       on_click=clear_everything)
-    for column, (page, label, icon) in zip(st.columns(len(PAGES)), PAGES):
-        active = st.session_state.page == page
-        column.button(label, icon=icon, key=f"nav_{page}", width="stretch",
-                      type="primary" if active else "secondary",
-                      on_click=go_to, args=(page,))
+    with st.container(key="swa_nav"):
+        for column, (page, label, icon) in zip(st.columns(len(PAGES)), PAGES):
+            active = st.session_state.page == page
+            column.button(label, icon=icon, key=f"nav_{page}", width="stretch",
+                          type="primary" if active else "secondary",
+                          on_click=go_to, args=(page,))
     st.write("")
 
 
@@ -450,7 +461,7 @@ def draw_group_members():
             if key not in st.session_state:
                 st.session_state[key] = name
             is_me = name == st.session_state.my_name
-            name_box, info, remove = st.columns([3, 4, 1], vertical_alignment="center")
+            name_box, info, remove = st.columns([3, 3, 2], vertical_alignment="center")
             name_box.text_input(f"Name of {name}", key=key, on_change=rename_member, args=(name,),
                                 label_visibility="collapsed")
             source = st.session_state.member_sources.get(name)
@@ -576,12 +587,13 @@ def draw_attendance_row(result):
         return
     used = result["counted_absences"] / result["allowed"] if result["allowed"] else 1.0
     width = int(min(1.0, max(0.0, used)) * 100)
+    lates = result["lates_to_next"]
     details = (f'{result["counted_absences"]} of {result["allowed"]} allowed absences used '
                f'({result["absent"]} absent, {result["late"]} late, {result["early"]} left early, '
-               f'{result["excused"]} excused). {result["lates_to_next"]} more late(s) until the '
-               f'next one counts as an absence.')
-    st.markdown(f'<div class="swa-row"><p class="title">{safe(result["course"])} &nbsp;{label}'
-                f'<span style="float:right">{safe(miss_text(result))}</span></p>'
+               f'{result["excused"]} excused). {lates} more {"late" if lates == 1 else "lates"} '
+               f'until the next one counts as an absence.')
+    st.markdown(f'<div class="swa-row"><div class="head"><p class="title">{safe(result["course"])} '
+                f'&nbsp;{label}</p><p class="title">{safe(miss_text(result))}</p></div>'
                 f'<div class="swa-bar"><span style="width:{width}%;background:{BAR_COLOURS[colour]};"></span></div>'
                 f'<p class="meta">{safe(details)}</p></div>', unsafe_allow_html=True)
 
