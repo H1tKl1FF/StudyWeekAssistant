@@ -1,0 +1,14 @@
+{
+  "description": "nsmart.wsu.ac.kr (Canvas): deadlines from a saved planner answer (invented courses), an error answer, an empty list, a good and a wrong login page, and both Smart LMS sites together with one deadline that is on both",
+  "today": "2026-11-16 09:00",
+  "canvas_pages": [
+    "canvas_logged_in.html",
+    "canvas_wrong_password.html"
+  ],
+  "canvas_replies": [
+    "canvas_planner.json",
+    "canvas_error.json",
+    "canvas_empty.json"
+  ],
+  "merge_both_sites": ["lms_events.json", "canvas_planner.json"]
+}

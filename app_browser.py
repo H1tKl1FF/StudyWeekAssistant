@@ -637,22 +637,24 @@ def get_from_attendance_site(student_id, password):
 
 
 def get_from_smart_lms(student_id, password):
-    """Deadlines from smart.wsu.ac.kr, so no calendar file is needed."""
-    try:
-        with st.spinner("Getting your deadlines from Smart LMS..."):
-            deadlines = core.fetch_deadlines_from_lms(student_id, password)
-    except core.InputError as problem:
-        st.warning(f"Smart LMS: {problem}")
+    """Deadlines from smart.wsu.ac.kr and nsmart.wsu.ac.kr, so no calendar file is needed."""
+    with st.spinner("Getting your deadlines from Smart LMS (smart and nsmart)..."):
+        deadlines, problems = core.fetch_all_deadlines(student_id, password)
+    if len(problems) == len(core.DEADLINE_SITES):      # neither site worked
+        for problem in problems:
+            st.warning(problem)
         return
     st.session_state.deadlines = deadlines
     st.success(f"Deadlines loaded from Smart LMS: {len(deadlines)} entries.")
+    for problem in problems:                           # the other site still worked
+        st.info(problem)
 
 
 def draw_login_box():
     with st.container(border=True):
         st.markdown("**Option 1: log in once, get everything**")
         st.caption("Gets your timetable and attendance from att.wsu.ac.kr and your deadlines "
-                   "from Smart LMS. Your password is used for these requests only and is never saved.")
+                   "from smart.wsu.ac.kr and nsmart.wsu.ac.kr. Your password is used for these requests only and is never saved.")
         with st.form("login_form", clear_on_submit=True, border=False):
             # autocomplete off: the browser should not suggest saved IDs or passwords here
             student_id = st.text_input("Student ID", autocomplete="off")

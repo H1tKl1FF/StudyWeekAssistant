@@ -25,7 +25,7 @@ FILES
                        powershell -ExecutionPolicy Bypass -File packaging\build_windows.ps1
                      Needs Python and Inno Setup 6. The result is in dist\.
   requirements.txt   The libraries to install
-  test_cases/        Six test cases with input files and expected output
+  test_cases/        Seven test cases with input files and expected output
   README.txt         This file
 
 
@@ -74,8 +74,10 @@ HOW TO GET YOUR OWN DATA IN
          Mon,10:00,12:00,Marketing Principles
 
   Deadlines - choose one:
-    a) The same login as above also gets your deadlines from Smart LMS
-       (smart.wsu.ac.kr). Nothing else to do.
+    a) The same login as above also gets your deadlines from both Smart LMS
+       sites, smart.wsu.ac.kr and nsmart.wsu.ac.kr, and puts them in one
+       list. If only one site accepts the login, its deadlines are still
+       shown. Nothing else to do.
     b) Or upload the calendar file by hand:
     1. Open smart.wsu.ac.kr and go to Calendar.
     2. Click "Export calendar", choose "All events" and
@@ -123,6 +125,9 @@ TEST CASES
                            lates turning into absences, empty calendar
   case6_smart_lms          Deadlines from saved Smart LMS answers, an error
                            answer, an empty list, a good and a wrong login
+  case7_new_smart_lms      Deadlines from saved nsmart.wsu.ac.kr answers, an
+                           error answer, an empty list, a good and a wrong
+                           login, and both sites together (no double entries)
 
   All students and courses in the test cases are invented.
 
@@ -130,7 +135,8 @@ TEST CASES
 PRIVACY AND SAFETY
 ------------------
   - The app runs on your own computer. Nothing is sent anywhere except the
-    login requests to the university attendance site and Smart LMS (https).
+    login requests to the university attendance site and the two Smart LMS
+    sites (https).
   - The password is used for that one request and is never written to a file.
   - Each student logs in only to their own account.
 

@@ -1,0 +1,16 @@
+while(1);[
+ {"plannable_type": "assignment", "plannable_date": "2026-11-18T05:00:00Z", "context_name": "Marketing Analytics",
+  "plannable": {"title": "Case study 3", "due_at": "2026-11-18T05:00:00Z"}},
+ {"plannable_type": "quiz", "plannable_date": "2026-11-21T14:59:00Z", "context_name": "Finance &amp; Accounting",
+  "plannable": {"title": "Chapter 7 quiz"}},
+ {"plannable_type": "discussion_topic", "plannable_date": "2026-11-12T14:59:00Z", "context_name": "Marketing Analytics",
+  "plannable": {"title": "Week 11 discussion"}},
+ {"plannable_type": "assignment", "plannable_date": "2026-11-17T14:59:00Z", "context_name": "Business Communication",
+  "plannable": {"title": "Team presentation slides"}},
+ {"plannable_type": "announcement", "plannable_date": "2026-11-16T01:00:00Z", "context_name": "Marketing Analytics",
+  "plannable": {"title": "Room change this week"}},
+ {"plannable_type": "planner_note", "plannable_date": "2026-11-19T00:00:00Z",
+  "plannable": {"title": "Buy printer paper"}},
+ {"plannable_type": "assignment", "context_name": "Marketing Analytics",
+  "plannable": {"title": "Optional extra task"}}
+]

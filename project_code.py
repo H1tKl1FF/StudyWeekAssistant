@@ -61,6 +61,12 @@ SMART_LMS_SITE = "https://smart.wsu.ac.kr"
 DEADLINE_DAYS_BACK = 7
 DEADLINE_DAYS_AHEAD = 60
 SMART_LMS_MAX_EVENTS = 50          # the most Smart LMS sends in one answer
+# The second Smart LMS site (Canvas). Some courses put their work only here.
+NEW_SMART_LMS_SITE = "https://nsmart.wsu.ac.kr"
+NEW_SMART_LMS_MAX_ITEMS = 100      # one page of the planner list is enough
+# Planner entries that are work to hand in (not announcements or own notes)
+NEW_SMART_LMS_WORK_TYPES = {"assignment", "quiz", "discussion_topic",
+                            "assessment_request", "sub_assignment"}
 
 # Status codes used by the attendance site (taken from the site's own code).
 SITE_ABSENT_CODES = {"0", "1", "11", "21", "31"}
@@ -834,6 +840,113 @@ def fetch_deadlines_from_lms(student_id, password):
 
 
 # ----------------------------------------------------------------------------
+# PART 7C - TALKING TO THE NEW SMART LMS (nsmart.wsu.ac.kr, deadlines)
+# This second site is a Canvas site. We log in on its normal login page with
+# the same ID and password, then ask for the planner list (the "To Do" list
+# on its dashboard). The password is used once and is never saved.
+# ----------------------------------------------------------------------------
+
+def read_canvas_login_token(page_html):
+    """Find the hidden authenticity_token that the nsmart login form needs."""
+    match = re.search(r'name="authenticity_token" value="([^"]*)"', page_html)
+    if not match:
+        raise InputError("The nsmart.wsu.ac.kr login page could not be read right now. "
+                         "Upload the calendar file instead.")
+    return html.unescape(match.group(1))
+
+
+def read_canvas_user(page_html):
+    """After a good login the page names the student's user number."""
+    match = re.search(r'"current_user_id":"(\d+)"', page_html)
+    if not match:
+        raise LoginError("nsmart.wsu.ac.kr did not accept this ID and password. If your "
+                         "nsmart password is different, upload the calendar file instead.")
+    return match.group(1)
+
+
+def read_canvas_planner_reply(reply):
+    """Turn the nsmart planner list into deadlines, the same shape as load_deadlines()."""
+    if not isinstance(reply, list):
+        raise InputError("nsmart.wsu.ac.kr did not send the deadlines. "
+                         "Upload the calendar file instead.")
+    deadlines = []
+    for item in reply:
+        work = item.get("plannable") or {}
+        title = work.get("title") or work.get("name")
+        moment = item.get("plannable_date") or work.get("due_at")
+        if item.get("plannable_type") not in NEW_SMART_LMS_WORK_TYPES or not title or not moment:
+            continue                       # not work to hand in, or no date to place it
+        due = datetime.fromisoformat(moment.replace("Z", "+00:00"))
+        deadlines.append({"title": clean_deadline_title(html.unescape(title)),
+                          "course": html.unescape(item.get("context_name") or "General"),
+                          "due": due.astimezone(KOREA_TIME).replace(tzinfo=None)})
+    return sorted(deadlines, key=lambda entry: entry["due"])
+
+
+def read_canvas_json(text):
+    """Canvas puts 'while(1);' in front of its answers; remove it before reading."""
+    return json.loads(text.removeprefix("while(1);"))
+
+
+def fetch_deadlines_from_canvas(student_id, password):
+    """Log in to nsmart.wsu.ac.kr and collect the deadlines of the coming weeks."""
+    try:
+        import requests
+    except ImportError:
+        raise InputError("Logging in needs the requests library. Run: pip install requests")
+    if not student_id.strip() or not password:
+        raise LoginError("Type both your student ID and your password.")
+
+    session = requests.Session()           # keeps the login cookie for the next requests
+    try:
+        page = session.get(f"{NEW_SMART_LMS_SITE}/login/canvas", timeout=20)
+        token = read_canvas_login_token(page.text)
+        page = session.post(f"{NEW_SMART_LMS_SITE}/login/canvas", timeout=20, data={
+            "utf8": "✓", "authenticity_token": token,
+            "pseudonym_session[unique_id]": student_id.strip(),
+            "pseudonym_session[password]": password,
+            "pseudonym_session[remember_me]": "0"})
+        read_canvas_user(page.text)
+
+        now = datetime.now(KOREA_TIME)
+        answer = session.get(f"{NEW_SMART_LMS_SITE}/api/v1/planner/items", timeout=20, params={
+            "start_date": (now - timedelta(days=DEADLINE_DAYS_BACK)).isoformat(),
+            "end_date": (now + timedelta(days=DEADLINE_DAYS_AHEAD)).isoformat(),
+            "per_page": NEW_SMART_LMS_MAX_ITEMS})
+        answer.raise_for_status()
+        return read_canvas_planner_reply(read_canvas_json(answer.text))
+    except InputError:
+        raise                              # already a message for the student
+    except (requests.RequestException, ValueError):
+        raise InputError("nsmart.wsu.ac.kr could not be reached. Check your internet "
+                         "connection, or upload the calendar file instead.")
+
+
+def merge_deadlines(*lists):
+    """One list from several sites, without the same deadline twice, sorted by date."""
+    unique = {(d["title"], d["course"], d["due"]): d for found in lists for d in found}
+    return sorted(unique.values(), key=lambda entry: entry["due"])
+
+
+# Both Smart LMS sites; a course can use either one. Each message names its site.
+DEADLINE_SITES = (fetch_deadlines_from_lms, fetch_deadlines_from_canvas)
+
+
+def fetch_all_deadlines(student_id, password):
+    """Deadlines from both Smart LMS sites.
+
+    Returns (deadlines, problems): one site failing does not lose the other.
+    """
+    found, problems = [], []
+    for fetch in DEADLINE_SITES:
+        try:
+            found = found + [fetch(student_id, password)]
+        except InputError as problem:
+            problems = problems + [str(problem)]
+    return merge_deadlines(*found), problems
+
+
+# ----------------------------------------------------------------------------
 # PART 8 - TEXT REPORTS (used by the test cases and the start menu)
 # ----------------------------------------------------------------------------
 
@@ -973,6 +1086,32 @@ def run_case(folder):
         deadlines = attempt(file_name, read_events)
         if deadlines is not None:
             output.extend([f"{file_name}:", report_deadlines(rate_deadlines(deadlines, now)), ""])
+
+    for file_name in case.get("canvas_pages", []):
+        def read_canvas_page():
+            return read_canvas_user(read_text_file(os.path.join(folder, file_name)))
+        if attempt(file_name, read_canvas_page) is not None:
+            output.append(f"{file_name}: logged in to nsmart.wsu.ac.kr")
+
+    for file_name in case.get("canvas_replies", []):
+        def read_planner():
+            return read_canvas_planner_reply(read_canvas_json(
+                read_text_file(os.path.join(folder, file_name))))
+        deadlines = attempt(file_name, read_planner)
+        if deadlines is not None:
+            output.extend([f"{file_name}:", report_deadlines(rate_deadlines(deadlines, now)), ""])
+
+    if case.get("merge_both_sites"):
+        def merge_both():
+            with open(os.path.join(folder, case["merge_both_sites"][0]), encoding="utf-8") as handle:
+                old_site = read_lms_events_reply(json.load(handle))
+            new_site = read_canvas_planner_reply(read_canvas_json(
+                read_text_file(os.path.join(folder, case["merge_both_sites"][1]))))
+            return merge_deadlines(old_site, new_site)
+        deadlines = attempt("Both sites", merge_both)
+        if deadlines is not None:
+            output.extend(["Both sites together:",
+                           report_deadlines(rate_deadlines(deadlines, now)), ""])
 
     return "\n".join(output).rstrip() + "\n"
 

@@ -1,0 +1,25 @@
+CASE: nsmart.wsu.ac.kr (Canvas): deadlines from a saved planner answer (invented courses), an error answer, an empty list, a good and a wrong login page, and both Smart LMS sites together with one deadline that is on both
+
+canvas_logged_in.html: logged in to nsmart.wsu.ac.kr
+canvas_wrong_password.html: ERROR - nsmart.wsu.ac.kr did not accept this ID and password. If your nsmart password is different, upload the calendar file instead.
+canvas_planner.json:
+DEADLINES
+  [OVERDUE] Thu 12 Nov 23:59  Marketing Analytics: Week 11 discussion  (overdue)
+  [URGENT ] Tue 17 Nov 23:59  Business Communication: Team presentation slides  (1 day left)
+  [SOON   ] Wed 18 Nov 14:00  Marketing Analytics: Case study 3  (2 days left)
+  [SOON   ] Sat 21 Nov 23:59  Finance & Accounting: Chapter 7 quiz  (5 days left)
+
+canvas_error.json: ERROR - nsmart.wsu.ac.kr did not send the deadlines. Upload the calendar file instead.
+canvas_empty.json:
+DEADLINES
+  No deadlines found in the calendar.
+
+Both sites together:
+DEADLINES
+  [OVERDUE] Thu 12 Nov 23:59  Marketing Analytics: Week 11 discussion  (overdue)
+  [OVERDUE] Fri 13 Nov 12:00  Data Literacy: Lab report 4  (overdue)
+  [URGENT ] Tue 17 Nov 23:59  Business Communication: Team presentation slides  (1 day left)
+  [SOON   ] Wed 18 Nov 14:00  Marketing Analytics: Case study 3  (2 days left)
+  [SOON   ] Fri 20 Nov 18:00  R&D Basics: Weekly quiz 9  (4 days left)
+  [SOON   ] Sat 21 Nov 23:59  Finance & Accounting: Chapter 7 quiz  (5 days left)
+  [LATER  ] Thu 10 Dec 00:00  Global Studies: Reflection essay  (23 days left)
