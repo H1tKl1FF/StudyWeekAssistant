@@ -94,7 +94,7 @@ RULES THE TOOL USES
 -------------------
   - A course is failed when absences are MORE than 1/3 of all class sessions
     (Woosong academic regulations, article 10).
-  - 3 lates count as 1 absence (this is how the attendance site counts).
+  - 3 late arrivals count as 1 absence (this is how the attendance site counts).
   - Leaving early is counted like a late. This is our assumption.
   - Excused absences do not count.
   - Warning levels: WARNING from half of the allowed absences, DANGER from

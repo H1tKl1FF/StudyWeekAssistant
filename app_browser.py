@@ -40,7 +40,8 @@ ATTENDANCE_LABELS = {"FAILED": "Over the limit", "DANGER": "Almost at the limit"
 ATTENDANCE_COLOURS = {"FAILED": "red", "DANGER": "red", "WARNING": "amber",
                       "SAFE": "green", "NO DATA": "grey"}
 ATTENDANCE_ORDER = ["FAILED", "DANGER", "WARNING", "SAFE", "NO DATA"]
-BAR_COLOURS = {"red": "#E24B4A", "amber": "#EF9F27", "green": "#639922", "grey": "#888780"}
+# The amber is the darker one, so bars and row edges stand out at least 3:1 on white
+BAR_COLOURS = {"red": "#E24B4A", "amber": "#BA7517", "green": "#639922", "grey": "#888780"}
 
 PAGES = [("home", "Home", ":material/home:"),
          ("meet", "Meet", ":material/groups:"),
@@ -56,11 +57,25 @@ STYLE = """
 [data-testid="stSidebar"], [data-testid="stSidebarCollapsedControl"] {display: none;}
 button[kind="primary"], [data-testid="stBaseButton-primary"] {
     background: #EF9F27; border-color: #EF9F27; color: #412402;}
+/* Darker amber on hover so the white text stays readable (5:1) */
 button[kind="primary"]:hover, [data-testid="stBaseButton-primary"]:hover {
-    background: #BA7517; border-color: #BA7517; color: #FFFFFF;}
+    background: #9A6212; border-color: #9A6212; color: #FFFFFF;}
+/* Keyboard focus: keep the amber button readable and draw a clear blue ring */
+button[kind="primary"]:focus:not(:hover), [data-testid="stBaseButton-primary"]:focus:not(:hover) {
+    background: #EF9F27; border-color: #EF9F27; color: #412402;}
+button[kind="primary"]:focus-visible, [data-testid="stBaseButton-primary"]:focus-visible {
+    box-shadow: 0 0 0 2px #FFFFFF, 0 0 0 4px #0C447C; outline: none;}  /* shows in light and dark mode */
+/* The open page is marked by an underline too, not only by its colour */
+.st-key-swa_nav [data-testid="stBaseButton-primary"] p {
+    text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px;}
+/* Text only screen readers read out */
+.swa-sr {position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden;
+         clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;}
 .swa-top {background: #0C447C; border-radius: 14px; padding: 18px 24px; margin-bottom: 10px;}
 .swa-top .title {color: #FFFFFF; font-size: 1.55rem; font-weight: 700; margin: 0; padding: 0;}
 .swa-top p {color: #B5D4F4; margin: 4px 0 0 0;}
+.swa-top h1.title {line-height: 1.3;}
+.swa-top [data-testid="stHeaderActionElements"] {display: none;}  /* no link icon on the greeting */
 .swa-demo {background: rgba(239, 159, 39, 0.18); border: 1px solid rgba(239, 159, 39, 0.6);
             border-radius: 12px; padding: 9px 14px; margin: 0;}
 /* Everything below uses see-through tints and inherits the text colour,
@@ -109,7 +124,9 @@ button[kind="primary"]:hover, [data-testid="stBaseButton-primary"]:hover {
 .swa-grid th {background: #0C447C; color: #FFFFFF; padding: 4px 6px; font-size: 12px;}
 .swa-grid td {padding: 3px 6px; border: 1px solid rgba(128, 128, 128, 0.25); text-align: center;
               font-size: 12px; color: inherit;}
-.swa-grid td.time {white-space: nowrap;}
+.swa-grid td.time, .swa-grid th.time {white-space: nowrap;}
+.swa-grid th.time {background: none; color: inherit; font-weight: 400; padding: 3px 6px; text-align: center;
+                   border: 1px solid rgba(128, 128, 128, 0.25);}
 .swa-grid td.free {background: rgba(99, 153, 34, 0.30);}
 .swa-grid td.one {background: rgba(239, 159, 39, 0.35);}
 .swa-grid td.many {background: rgba(55, 138, 221, 0.25);}
@@ -220,7 +237,7 @@ def draw_top_bar():
     hour = current_time().hour
     greeting = "Good morning" if hour < 12 else "Good afternoon" if hour < 18 else "Good evening"
     date_text = current_time().strftime("%A %d %B %Y")
-    st.markdown(f'<div class="swa-top"><p class="title">{greeting}, {safe(name)}</p>'
+    st.markdown(f'<div class="swa-top"><h1 class="title">{greeting}, {safe(name)}</h1>'
                 f'<p>{date_text} · light or dark mode: ⋮ menu, top right</p></div>',
                 unsafe_allow_html=True)
     if st.session_state.demo:
@@ -279,7 +296,7 @@ def meet_card():
     if almost:
         slot = almost[0]
         return dict(card, big=f'{slot["day"]} {core.format_time(slot["start"])}',
-                    badge=("Plan B: one person busy", "amber"),
+                    badge=("Second choice: one person busy", "amber"),
                     sub=f'{slot["busy"][0]} has class then')
     return dict(card, big="No common time", badge=("Try a shorter meeting", "red"), sub="")
 
@@ -338,7 +355,7 @@ def draw_heads_up():
         if risky:
             notes.append(f"{risky} course{'s' if risky != 1 else ''} close to the absence limit")
     if notes:
-        st.warning("Heads up: " + " and ".join(notes) + ".", icon=":material/warning:")
+        st.warning("Please check: " + " and ".join(notes) + ".", icon=":material/warning:")
     else:
         st.success("Nothing urgent this week.", icon=":material/check_circle:")
 
@@ -359,9 +376,11 @@ def draw_home():
 def week_grid_html(timetables, days, earliest, latest):
     """Draw the week as a coloured table: green = everyone free."""
     start, end = core.parse_time(earliest), core.parse_time(latest)
-    rows = ['<table class="swa-grid"><tr><th></th>'] + [f"<th>{day}</th>" for day in days] + ["</tr>"]
+    rows = ['<table class="swa-grid"><caption class="swa-sr">Who is busy in each half hour of '
+            'the week</caption><tr><th scope="col"><span class="swa-sr">Time</span></th>'] + \
+           [f'<th scope="col">{day}</th>' for day in days] + ["</tr>"]
     for minute in range(start, end, 30):
-        rows.append(f'<tr><td class="time">{core.format_time(minute)}</td>')
+        rows.append(f'<tr><th scope="row" class="time">{core.format_time(minute)}</th>')
         for day in days:
             busy = [name for name, blocks in timetables.items()
                     if any(b["day"] == day and b["start"] < minute + 30 and b["end"] > minute for b in blocks)]
@@ -472,7 +491,7 @@ def draw_group_members():
                       ([f"from {source}"] if source else [])
             info.caption(" · ".join(details))
             if not is_me:
-                remove.button("Remove", key=f"remove_{name}", icon=":material/delete:",
+                remove.button(f"Remove {name}", key=f"remove_{name}", icon=":material/delete:",
                               on_click=remove_member, args=(name,))
 
 
@@ -522,7 +541,7 @@ def draw_meet_page():
     else:
         st.warning("No time works for everyone with these settings.", icon=":material/warning:")
         if almost:
-            st.markdown("**Plan B: times when only one person is busy**")
+            st.markdown("**Second choice: times when only one person is busy**")
             for slot in almost[:5]:
                 st.write(f'{slot["day"]} {core.format_time(slot["start"])} - {core.format_time(slot["end"])} '
                          f'({core.format_duration(slot["minutes"])}), busy: {slot["busy"][0]}')
@@ -593,11 +612,12 @@ def draw_attendance_row(result):
     lates = result["lates_to_next"]
     details = (f'{result["counted_absences"]} of {result["allowed"]} allowed absences used '
                f'({result["absent"]} absent, {result["late"]} late, {result["early"]} left early, '
-               f'{result["excused"]} excused). {lates} more {"late" if lates == 1 else "lates"} '
+               f'{result["excused"]} excused). {lates} more {"late arrival" if lates == 1 else "late arrivals"} '
                f'until the next one counts as an absence.')
     st.markdown(f'<div class="swa-row"><div class="head"><p class="title">{safe(result["course"])} '
                 f'&nbsp;{label}</p><p class="title">{safe(miss_text(result))}</p></div>'
-                f'<div class="swa-bar"><span style="width:{width}%;background:{BAR_COLOURS[colour]};"></span></div>'
+                f'<div class="swa-bar" role="img" aria-label="{width}% of allowed absences used">'
+                f'<span style="width:{width}%;background:{BAR_COLOURS[colour]};"></span></div>'
                 f'<p class="meta">{safe(details)}</p></div>', unsafe_allow_html=True)
 
 
@@ -610,7 +630,7 @@ def draw_attendance_page():
         return
     with st.expander("How is this counted?", icon=":material/help:"):
         st.write("Woosong rule: a course is failed when absences are more than 1/3 of all class "
-                 "sessions. Three lates (or early leaves) count as one absence. "
+                 "sessions. Three late arrivals (or early leaves) count as one absence. "
                  "Excused absences do not count.")
     results = checked_attendance()
     for result in results:
