@@ -17,3 +17,6 @@ packaging/app_icon.ico
 
 # Hallmark design records (before/after notes, scaffold, log)
 .hallmark/
+
+# Design reviews (notes, screenshots and evidence records)
+.design-review/

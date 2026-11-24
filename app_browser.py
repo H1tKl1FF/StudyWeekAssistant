@@ -15,7 +15,7 @@ import html
 import importlib
 import io
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import streamlit as st
 
@@ -72,7 +72,7 @@ THEME_WATCH = """
   if (window.swaThemeWatch) { window.swaThemeWatch(); return; }
   const root = document.documentElement;
   const isDark = (colour) => {
-    const [r, g, b] = (colour.match(/[\d.]+/g) || ["255", "255", "255"]).map(Number);
+    const [r, g, b] = (colour.match(/[\\d.]+/g) || ["255", "255", "255"]).map(Number);
     return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255 < 0.45;
   };
   const update = () => {
@@ -198,12 +198,14 @@ def miss_text(result):
 # ----------------------------------------------------------------------------
 
 def draw_top_bar():
-    name = st.session_state.my_name.split()[0] if st.session_state.my_name else "there"
+    name = st.session_state.my_name.split()[0] if st.session_state.my_name else ""
     hour = current_time().hour
     greeting = "Good morning" if hour < 12 else "Good afternoon" if hour < 18 else "Good evening"
+    greeting = f"{greeting}, {safe(name)}" if name else greeting
     date_text = current_time().strftime("%A %d %B %Y")
-    st.markdown(f'<div class="swa-head"><h1>{greeting}, {safe(name)}</h1>'
-                f'<p class="date">{date_text}</p></div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="swa-head"><p class="swa-brand">Study Week Assistant</p>'
+                f'<p class="date">{date_text}</p></div><h1 class="swa-greeting">{greeting}</h1>',
+                unsafe_allow_html=True)
     # The page tabs. The open page is a "primary" button, which app.css draws as an underlined tab.
     with st.container(key="swa_nav"):
         for column, (page, label, icon) in zip(st.columns(len(PAGES)), PAGES):
@@ -335,11 +337,76 @@ def draw_heads_up():
         st.success("Nothing urgent this week.", icon=":material/check_circle:")
 
 
+def week_days(now):
+    """Monday to Sunday of the week that holds now, as dates."""
+    monday = (now - timedelta(days=now.weekday())).date()
+    return [monday + timedelta(days=offset) for offset in range(7)]
+
+
+def meeting_slots_for_home():
+    """The times the whole group is free (default settings), or none when it can't be worked out."""
+    if len(st.session_state.group) < 2:
+        return []
+    try:
+        everyone, _ = core.find_meeting_slots(st.session_state.group)
+    except core.InputError:
+        return []
+    return everyone
+
+
+def day_items_html(day, deadlines, slots, today):
+    """What happens on one day: deadlines by time, then the times the group can meet."""
+    items = []
+    for item in sorted((d for d in deadlines if d["due"].date() == day), key=lambda d: d["due"]):
+        colour = DEADLINE_COLOURS[item["level"]]
+        items.append(f'<li class="swa-due {colour}"><span class="time">{item["due"].strftime("%H:%M")}</span>'
+                     f'<b>{safe(item["title"])}</b><span class="course">{safe(item["course"])}</span></li>')
+    if day >= today:
+        now = current_time()
+        minute_now = now.hour * 60 + now.minute if day == today else 0
+        day_slots = sorted((s for s in slots if s["day"] == core.DAYS[day.weekday()]
+                            and s["end"] > minute_now), key=lambda s: s["start"])
+        for slot in day_slots[:2]:
+            items.append(f'<li class="swa-meet"><span class="time">{core.format_time(slot["start"])} - '
+                         f'{core.format_time(slot["end"])}</span>Group can meet</li>')
+    if not items:
+        return '<p class="swa-none">Nothing due</p>'
+    return f'<ul>{"".join(items)}</ul>'
+
+
+def week_strip_html():
+    """The signature of the app: this week as a row of days, today marked."""
+    now = current_time()
+    today = now.date()
+    days = week_days(now)
+    deadlines = ([item for item in rated_deadlines() if item["level"] != "OVERDUE"]
+                 if st.session_state.deadlines else [])
+    slots = meeting_slots_for_home()
+    busy_weekend = [day for day in days[5:]
+                    if any(item["due"].date() == day for item in deadlines)]
+    shown = days[:5] + busy_weekend
+    columns = []
+    for day in shown:
+        is_today = day == today
+        mark = '<p class="swa-today">Today</p>' if is_today else ""
+        columns.append(f'<section class="swa-day{" today" if is_today else ""}">'
+                       f'<div class="swa-day-head"><h3>{core.DAYS[day.weekday()]} {day.day}</h3>{mark}</div>'
+                       f'{day_items_html(day, deadlines, slots, today)}</section>')
+    later = sum(item["due"].date() > days[-1] for item in deadlines)
+    note = (f'<p class="swa-week-note">{later} more due after this week, in Deadlines.</p>'
+            if later else "")
+    span = f'{days[0].day} to {days[-1].strftime("%d %B").lstrip("0")}'
+    return (f'<div class="swa-week-head"><h2>This week</h2><p>{span}</p></div>'
+            f'<div class="swa-week" style="--days:{len(shown)}">{"".join(columns)}</div>{note}')
+
+
 def draw_home():
     if not has_any_data():
         draw_welcome()
         return
     draw_heads_up()
+    with st.container(key="swa_sheet_strip"):
+        st.markdown(week_strip_html(), unsafe_allow_html=True)
     with st.container(key="swa_sheet_week"):
         for card in (meet_card(), deadline_card(), attendance_card()):
             draw_ledger_line(card)
@@ -577,16 +644,21 @@ def draw_deadlines_page():
         st.button("Go to My data", icon=":material/upload_file:", on_click=go_to, args=("data",))
         return
     rated = rated_deadlines()
-    counts = "".join(f'<div><dt>{DEADLINE_LABELS[level]}</dt>'
-                     f'<dd>{sum(item["level"] == level for item in rated)}</dd></div>'
-                     for level in DEADLINE_LABELS)
-    st.markdown(f'<dl class="swa-stats">{counts}</dl>', unsafe_allow_html=True)
-    show_old = st.toggle("Show overdue entries", value=False)
-    lines = [deadline_line_html(item) for item in rated
-             if item["level"] != "OVERDUE" or show_old]
-    if lines:
+    overdue = sum(item["level"] == "OVERDUE" for item in rated)
+    show_old = st.toggle(f"Show overdue entries ({overdue})", value=False)
+    # One group per due window: overdue (when shown), within 2 days, this week, later
+    groups = []
+    for level, label in DEADLINE_LABELS.items():
+        if level == "OVERDUE" and not show_old:
+            continue
+        items = [item for item in rated if item["level"] == level]
+        if items:
+            lines = "".join(deadline_line_html(item) for item in items)
+            groups.append(f'<section class="swa-group"><h3>{label} ({len(items)})</h3>'
+                          f'<div class="swa-lines">{lines}</div></section>')
+    if groups:
         with st.container(key="swa_sheet_deadlines"):
-            st.markdown(f'<div class="swa-lines">{"".join(lines)}</div>', unsafe_allow_html=True)
+            st.markdown("".join(groups), unsafe_allow_html=True)
 
 
 # ----------------------------------------------------------------------------
