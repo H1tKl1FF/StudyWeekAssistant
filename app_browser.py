@@ -809,9 +809,15 @@ def draw_login_box():
         if st.session_state.demo:              # never mix the demo students with real data
             clear_everything()
             st.session_state.page = "data"
-        problems = [get_from_attendance_site(student_id, password)]
-        problems = [text for text in problems if text] + get_from_smart_lms(student_id, password)
-        show_login_problems(problems)
+        attendance_problem = get_from_attendance_site(student_id, password)
+        lms_problems = get_from_smart_lms(student_id, password)
+        if attendance_problem:
+            show_login_problems([attendance_problem] + lms_problems)
+        elif lms_problems:                     # attendance worked; Smart LMS now needs a passkey
+            st.info("Deadlines could not be loaded with this login:\n"
+                    + "\n".join(f"- {text}" for text in lms_problems)
+                    + "\n\nSmart LMS now asks for a passkey, so use the calendar links below.",
+                    icon=":material/info:")
 
 
 LINK_STEPS = ("**smart.wsu.ac.kr:** open **Calendar**, click **Export calendar**, choose *All events* "

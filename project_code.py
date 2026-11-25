@@ -507,8 +507,8 @@ def parse_calendar_time(value, parameters):
     """Turn a calendar time such as 20261118T150000Z into Korean time."""
     value = value.strip()
     try:
-        if "VALUE=DATE" in parameters and "T" not in value:
-            return datetime.strptime(value, "%Y%m%d")
+        if "VALUE=DATE" in parameters and "T" not in value:   # all day: due by the end of that day
+            return datetime.strptime(value, "%Y%m%d").replace(hour=23, minute=59)
         if value.endswith("Z"):                # Z means world time (UTC)
             moment = datetime.strptime(value, "%Y%m%dT%H%M%SZ").replace(tzinfo=timezone.utc)
             return moment.astimezone(KOREA_TIME).replace(tzinfo=None)
@@ -560,7 +560,9 @@ def load_deadlines(source):
         if line == "BEGIN:VEVENT":
             event = {}
         elif line == "END:VEVENT" and event is not None:
-            if event.get("due") and event.get("title"):
+            # nsmart also lists course events (lectures, office hours); they are not work to hand in
+            is_course_event = event.get("uid", "").startswith("event-calendar-event-")
+            if event.get("due") and event.get("title") and not is_course_event:
                 title, course = event["title"], event.get("course")
                 if course is None:                 # nsmart writes "Essay [Course name]"
                     title, course = split_course_brackets(title)
@@ -575,6 +577,8 @@ def load_deadlines(source):
                 event["title"] = clean_deadline_title(value)
             elif name == "CATEGORIES":
                 event["course"] = value
+            elif name == "UID":
+                event["uid"] = value
             elif name == "DTSTART":
                 event["due"] = parse_calendar_time(value, parameters)
     return sorted(deadlines, key=lambda item: item["due"])

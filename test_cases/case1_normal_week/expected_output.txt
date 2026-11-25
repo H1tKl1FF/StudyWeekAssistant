@@ -50,7 +50,7 @@ DEADLINES
   [OVERDUE] Fri 13 Nov 23:59  Korean Culture: Reflection essay  (overdue)
   [URGENT ] Tue 17 Nov 23:59  Marketing Principles: Case study report  (1 day left, 17.6 free hours before)
   [SOON   ] Thu 19 Nov 00:00  Python for Business: Data cleaning exercise  (2 days left, 28.2 free hours before)
-  [SOON   ] Fri 20 Nov 00:00  Business Statistics: Quiz 3 opens  (3 days left, 37.2 free hours before)
+  [SOON   ] Fri 20 Nov 23:59  Business Statistics: Quiz 3 opens  (4 days left, 49.2 free hours before)
   [LATER  ] Mon 23 Nov 18:00  Project Management: Team charter  (7 days left, 78.8 free hours before)
   [LATER  ] Tue 01 Dec 18:00  Python for Business: Final group project  (15 days left, 160.9 free hours before)
 

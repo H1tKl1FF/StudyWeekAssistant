@@ -3,8 +3,7 @@ CASE: Smart LMS calendar links for passkey login: an nsmart calendar feed with t
 DEADLINES
   [SOON   ] Wed 18 Nov 23:59  Introduction to Psychology: Reading response 3  (2 days left)
   [SOON   ] Thu 19 Nov 23:59  Korean Culture: Essay [draft 2]  (3 days left)
-  [SOON   ] Fri 20 Nov 10:00  General: Office hours  (4 days left)
-  [LATER  ] Wed 25 Nov 00:00  Data Analysis [Section 2]: Lab report  (8 days left)
+  [LATER  ] Wed 25 Nov 23:59  Data Analysis [Section 2]: Lab report  (9 days left)
 
 https://smart.wsu.ac.kr/calendar/export_execute.php?userid=1&authtoken=abc&preset_what=all&preset_time=recentupcoming: accepted
   https://nsmart.wsu.ac.kr/feeds/calendars/user_abc123.ics  : accepted
