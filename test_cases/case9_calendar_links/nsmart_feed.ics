@@ -1,0 +1,24 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Instructure//Canvas//EN
+BEGIN:VEVENT
+UID:event-assignment-101
+DTSTART:20261118T145900Z
+SUMMARY:Reading response 3 [Introduction to Psychology]
+END:VEVENT
+BEGIN:VEVENT
+UID:event-assignment-102
+DTSTART;VALUE=DATE:20261125
+SUMMARY:Lab report [Data Analysis [Section 2]]
+END:VEVENT
+BEGIN:VEVENT
+UID:event-calendar-event-7
+DTSTART:20261120T010000Z
+SUMMARY:Office hours
+END:VEVENT
+BEGIN:VEVENT
+UID:event-assignment-103
+DTSTART:20261119T145900Z
+SUMMARY:Essay [draft 2] [Korean Culture]
+END:VEVENT
+END:VCALENDAR

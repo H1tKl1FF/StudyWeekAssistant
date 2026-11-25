@@ -1,0 +1,13 @@
+{
+  "description": "Smart LMS calendar links for passkey login: an nsmart calendar feed with the course in brackets, and which links the app agrees to open (invented data)",
+  "today": "2026-11-16 09:00",
+  "calendars": ["nsmart_feed.ics"],
+  "calendar_links": [
+    "https://smart.wsu.ac.kr/calendar/export_execute.php?userid=1&authtoken=abc&preset_what=all&preset_time=recentupcoming",
+    "  https://nsmart.wsu.ac.kr/feeds/calendars/user_abc123.ics  ",
+    "http://smart.wsu.ac.kr/calendar/export_execute.php",
+    "https://smart.wsu.ac.kr.example.com/feed.ics",
+    "https://evil.example.com/?next=smart.wsu.ac.kr",
+    "smart.wsu.ac.kr/calendar"
+  ]
+}

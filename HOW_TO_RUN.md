@@ -112,7 +112,7 @@ pip install -r requirements.txt
 python project_code.py --test
 ```
 
-The last line should say **8 passed, 0 failed**.
+The last line should say **9 passed, 0 failed**.
 
 ### Step 5. Start the app
 
@@ -169,7 +169,7 @@ Yellow "WARNING" lines are normal. Red "ERROR" lines are not (see
 py project_code.py --test
 ```
 
-The last line should say **8 passed, 0 failed**.
+The last line should say **9 passed, 0 failed**.
 
 ### Step 5. Start the app
 

@@ -99,7 +99,7 @@ def draw_styles():
 
 
 st.set_page_config(page_title="Study Week Assistant", page_icon=":material/calendar_month:", layout="wide",
-                   initial_sidebar_state="collapsed")
+                   initial_sidebar_state="auto")
 
 
 def safe(text):
@@ -207,13 +207,13 @@ def draw_top_bar():
     st.markdown(f'<div class="swa-head"><p class="swa-brand">Study Week Assistant</p>'
                 f'<p class="date">{date_text}</p></div><h1 class="swa-greeting">{greeting}</h1>',
                 unsafe_allow_html=True)
-    # The page tabs. The open page is a "primary" button, which app.css draws as an underlined tab.
-    with st.container(key="swa_nav"):
-        for column, (page, label, icon) in zip(st.columns(len(PAGES)), PAGES):
+    # The pages, in the left sidebar. The open page is a "primary" button, marked in app.css.
+    with st.sidebar, st.container(key="swa_nav"):
+        for page, label, icon in PAGES:
             active = st.session_state.page == page
-            column.button(label, icon=icon, key=f"nav_{page}", width="stretch",
-                          type="primary" if active else "secondary",
-                          on_click=go_to, args=(page,))
+            st.button(label, icon=icon, key=f"nav_{page}", width="stretch",
+                      type="primary" if active else "secondary",
+                      on_click=go_to, args=(page,))
     if st.session_state.demo:
         message, button = st.columns([5, 1], vertical_alignment="center")
         message.markdown('<p class="swa-demo">You\'re viewing the <b>demo week</b>: invented '
@@ -234,10 +234,8 @@ def steps_html(steps):
 
 
 def draw_welcome():
-    st.header("Welcome! Let's set up your week", anchor=False)
-    st.write("This tool answers three questions in one place: when can my group meet, "
-             "what is due next, and how many classes can I still miss?")
-    steps = [("Log in once", "Your student ID gets your timetable, attendance and deadlines."),
+    steps = [("Log in once", "Your student ID gets your timetable and attendance. "
+              "Paste your Smart LMS calendar links for deadlines."),
              ("Or upload files", "A timetable screenshot and the Smart LMS calendar (.ics)."),
              ("Add your teammates", "Upload their timetable files in the Meet page.")]
     with st.container(key="swa_sheet_welcome"):
@@ -672,9 +670,13 @@ def draw_deadlines_page():
         st.button("Go to My data", icon=":material/upload_file:", on_click=go_to, args=("data",))
         return
     rated = sorted(rated_deadlines(), key=lambda item: item["due"])
-    # Every deadline, one group per due window: overdue, within 2 days, this week, later
+    overdue = sum(item["level"] == "OVERDUE" for item in rated)
+    show_old = st.toggle(f"Show overdue entries ({overdue})", value=False)
+    # One group per due window: overdue (when switched on), within 2 days, this week, later
     groups = []
     for level, label in DEADLINE_LABELS.items():
+        if level == "OVERDUE" and not show_old:
+            continue
         items = [item for item in rated if item["level"] == level]
         if items:
             lines = "".join(deadline_line_html(item) for item in items)
@@ -790,9 +792,10 @@ def show_login_problems(problems):
 
 def draw_login_box():
     with st.container(key="swa_sheet_login"):
-        st.subheader("Option 1: log in once, get everything", anchor=False)
-        st.caption("Gets your timetable and attendance from att.wsu.ac.kr and your deadlines "
-                   "from smart.wsu.ac.kr and nsmart.wsu.ac.kr. Your password is used for these requests only and is never saved.")
+        st.subheader("Option 1: log in once", anchor=False)
+        st.caption("Gets your timetable and attendance from att.wsu.ac.kr, and tries your deadlines "
+                   "from smart.wsu.ac.kr and nsmart.wsu.ac.kr (until passkey login is required). "
+                   "Your password is used for these requests only and is never saved.")
         with st.form("login_form", clear_on_submit=True, border=False):
             # autocomplete off: the browser should not suggest saved IDs or passwords here
             student_id = st.text_input("Student ID", autocomplete="off")
@@ -808,6 +811,42 @@ def draw_login_box():
             st.session_state.page = "data"
         problems = [get_from_attendance_site(student_id, password)]
         problems = [text for text in problems if text] + get_from_smart_lms(student_id, password)
+        show_login_problems(problems)
+
+
+LINK_STEPS = ("**smart.wsu.ac.kr:** open **Calendar**, click **Export calendar**, choose *All events* "
+              "and *Recent and next 60 days*, click **Get calendar URL** and copy the link.\n\n"
+              "**nsmart.wsu.ac.kr:** open **Calendar**, click **Calendar feed** (bottom right) "
+              "and copy the link.\n\n"
+              "Each link is personal, like a password: never share it.")
+
+
+def draw_links_box():
+    """Deadlines from the Smart LMS calendar links: no password, so it works with passkey login."""
+    with st.container(key="swa_sheet_links"):
+        st.subheader("Deadlines with passkey login: calendar links", anchor=False)
+        st.caption("Smart LMS now asks for a passkey (I-ONE PASS), so this app cannot log in there. "
+                   "Paste your personal calendar links instead; they work without a password.")
+        with st.expander("Where do I find my calendar links?", icon=":material/help:"):
+            st.markdown(LINK_STEPS)
+        with st.form("links_form", border=False):
+            # password fields: each link works like a password, so keep it off the screen
+            smart_link = st.text_input("smart.wsu.ac.kr calendar link", type="password", autocomplete="off")
+            nsmart_link = st.text_input("nsmart.wsu.ac.kr calendar link", type="password", autocomplete="off")
+            pressed = st.form_submit_button("Get my deadlines", icon=":material/event:", type="primary")
+        if not pressed:
+            return
+        if not smart_link.strip() and not nsmart_link.strip():
+            st.error("Paste at least one calendar link.")
+            return
+        if st.session_state.demo:              # never mix the demo students with real data
+            clear_everything()
+            st.session_state.page = "data"
+        with st.spinner("Getting your deadlines from the calendar links..."):
+            deadlines, problems = core.fetch_deadlines_from_links([smart_link, nsmart_link])
+        if deadlines or not problems:
+            st.session_state.deadlines = deadlines
+            st.success(f"Deadlines loaded from your calendar links: {len(deadlines)} entries.")
         show_login_problems(problems)
 
 
@@ -862,6 +901,8 @@ def draw_data_page():
     left, right = st.columns(2, gap="large")
     with left:
         draw_login_box()
+        st.write("")
+        draw_links_box()
     with right:
         draw_upload_box()
 

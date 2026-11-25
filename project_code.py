@@ -36,6 +36,7 @@ import os
 import re
 import sys
 from datetime import datetime, timedelta, timezone
+from urllib.parse import urlsplit
 
 # ----------------------------------------------------------------------------
 # PART 1 - SETTINGS (change the rules here, not inside the functions)
@@ -524,6 +525,18 @@ def clean_deadline_title(title):
     return title
 
 
+def split_course_brackets(title):
+    """ "Lab [Data Analysis [2]]" -> ("Lab", "Data Analysis [2]"): the last bracket pair, matched."""
+    depth = 0
+    for index in range(len(title) - 1, 0, -1):
+        depth += {"]": 1, "[": -1}.get(title[index], 0)
+        if depth == 0:
+            if index == len(title) - 1 or title[index - 1] != " ":
+                break                              # no closing bracket at the end
+            return title[:index - 1], title[index + 1:-1]
+    return title, None
+
+
 def load_deadlines(source):
     """Read the calendar file exported from Smart LMS.
 
@@ -548,7 +561,10 @@ def load_deadlines(source):
             event = {}
         elif line == "END:VEVENT" and event is not None:
             if event.get("due") and event.get("title"):
-                deadlines.append({"title": event["title"], "course": event.get("course", "General"),
+                title, course = event["title"], event.get("course")
+                if course is None:                 # nsmart writes "Essay [Course name]"
+                    title, course = split_course_brackets(title)
+                deadlines.append({"title": title, "course": course or "General",
                                   "due": event["due"]})
             event = None
         elif event is not None and ":" in line:
@@ -1007,6 +1023,56 @@ def fetch_all_deadlines(student_id, password):
 
 
 # ----------------------------------------------------------------------------
+# PART 7D - SMART LMS CALENDAR LINKS (work with passkey login)
+# From December 2026 the university login needs a passkey (I-ONE PASS), which this
+# app cannot do. Both Smart LMS sites give every student a personal calendar link
+# that works without logging in, so the app reads that link instead.
+# ----------------------------------------------------------------------------
+
+CALENDAR_LINK_HOSTS = ("smart.wsu.ac.kr", "nsmart.wsu.ac.kr")
+
+
+def check_calendar_link(link):
+    """Only https links to the two Smart LMS sites are opened. Returns the cleaned link."""
+    link = link.strip()
+    parts = urlsplit(link)
+    if parts.scheme != "https" or parts.hostname not in CALENDAR_LINK_HOSTS:
+        raise InputError("This is not a Smart LMS calendar link. Copy the link from "
+                         "smart.wsu.ac.kr or nsmart.wsu.ac.kr; it starts with https://")
+    return link
+
+
+def fetch_deadlines_from_link(link):
+    """Deadlines from one Smart LMS calendar link (the link itself is the key, no password)."""
+    link = check_calendar_link(link)
+    site = urlsplit(link).hostname
+    try:
+        import requests
+    except ImportError:
+        raise InputError("Calendar links need the requests library. Run: pip install requests")
+    try:
+        answer = requests.get(link, timeout=20, allow_redirects=False)
+    except requests.RequestException:
+        raise InputError(f"{site} could not be reached. Check your internet connection.")
+    # A redirect means the site wants a login; a wrong key gets a short text page instead
+    if answer.status_code != 200 or b"BEGIN:VCALENDAR" not in answer.content:
+        raise InputError(f"{site} did not accept this calendar link. Copy the calendar "
+                         "link again from the site, or upload the calendar file instead.")
+    return load_deadlines(answer.content)
+
+
+def fetch_deadlines_from_links(links):
+    """Deadlines from every calendar link given. Returns (deadlines, problems), like the login."""
+    found, problems = [], []
+    for link in (link for link in links if link.strip()):
+        try:
+            found = found + [fetch_deadlines_from_link(link)]
+        except InputError as problem:
+            problems = problems + [str(problem)]
+    return merge_deadlines(*found), problems
+
+
+# ----------------------------------------------------------------------------
 # PART 8 - TEXT REPORTS (used by the test cases and the start menu)
 # ----------------------------------------------------------------------------
 
@@ -1160,6 +1226,10 @@ def run_case(folder):
         deadlines = attempt(file_name, read_planner)
         if deadlines is not None:
             output.extend([f"{file_name}:", report_deadlines(rate_deadlines(deadlines, now)), ""])
+
+    for link in case.get("calendar_links", []):
+        if attempt(link, lambda: check_calendar_link(link)) is not None:
+            output.append(f"{link}: accepted")
 
     if case.get("merge_both_sites"):
         def merge_both():

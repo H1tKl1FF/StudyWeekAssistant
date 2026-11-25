@@ -27,7 +27,7 @@ FILES
                        powershell -ExecutionPolicy Bypass -File packaging\build_windows.ps1
                      Needs Python and Inno Setup 6. The result is in dist\.
   requirements.txt   The libraries to install
-  test_cases/        Eight test cases with input files and expected output
+  test_cases/        Nine test cases with input files and expected output
   README.txt         This file
 
 
@@ -132,6 +132,8 @@ TEST CASES
                            login, and both sites together (no double entries)
   case8_odd_inputs         Errors: a comma in a course name, and site answers
                            of an unexpected shape from all three sites
+  case9_calendar_links     Passkey login: an nsmart calendar feed, and which
+                           Smart LMS calendar links the app agrees to open
 
   All students and courses in the test cases are invented.
 
