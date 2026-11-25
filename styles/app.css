@@ -107,12 +107,31 @@
 .swa-meet { background: var(--color-ok-tint); border-radius: var(--radius-input); padding: var(--space-2xs) var(--space-xs); }
 .swa-meet .time { color: var(--color-ink); }
 .swa-none { color: var(--color-muted); font-size: var(--text-sm); margin: 0; }
-.swa-week-note { color: var(--color-muted); font-size: var(--text-sm); margin: var(--space-sm) 0 0; }
+.swa-day .left { font-size: var(--text-xs); font-weight: 600; color: var(--color-ink); }
+.swa-due.red .left { color: var(--color-danger); }
+
+/* Deadlines before or after this week, under the strip */
+.swa-outside { margin-top: var(--space-md); padding-top: var(--space-sm); border-top: var(--rule-hair) solid var(--color-rule-2); }
+.stApp .swa-outside h3 { font-size: var(--text-sm); color: var(--color-muted); font-weight: 600; letter-spacing: 0; margin: 0 0 var(--space-xs); padding: 0; max-width: none; }
+.swa-outside ul { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-xs); }
+.swa-outside li { margin: 0; display: grid; grid-template-columns: 9rem minmax(0, 1fr); column-gap: var(--space-sm); font-size: var(--text-sm); }
+.swa-outside li .course { grid-column: 2; color: var(--color-muted); font-size: var(--text-xs); }
+.swa-outside .left { grid-row: span 2; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--color-ink); }
+.swa-outside li.red .left { color: var(--color-danger); }
+.swa-outside li.grey .left { color: var(--color-danger); }
 
 /* ---------------------------------------------------------------- deadlines, grouped by when they are due */
 .swa-group + .swa-group { margin-top: var(--space-lg); }
 .stApp .swa-group h3 { font-size: var(--text-sm); color: var(--color-muted); font-weight: 600; letter-spacing: 0; margin: 0 0 var(--space-2xs); padding: 0 0 var(--space-2xs); border-bottom: var(--rule-hair) solid var(--color-rule-2); max-width: none; }
 .swa-group .swa-line:first-child { padding-top: var(--space-sm); }
+/* Each deadline starts with how long is left */
+.swa-line.swa-deadline { grid-template-columns: 6.5rem minmax(0, 1fr); }
+.swa-left { margin: 0; display: grid; line-height: 1.1; color: var(--color-ink); }
+.swa-left .num { font-family: var(--font-outlier); font-variant-numeric: tabular-nums; font-size: var(--text-xl); font-weight: 600; }
+.swa-left .unit { font-size: var(--text-xs); color: var(--color-muted); }
+.swa-left.red .num, .swa-left.grey .num { color: var(--color-danger); }
+.swa-left.amber .num { color: var(--color-warn); }
+.swa-left.green .num { color: var(--color-ok); }
 .stApp [class*="st-key-swa_sheet"] h3 { font-size: var(--text-title); }
 
 /* One line of the week ledger on Home */
@@ -197,6 +216,8 @@
 @media (max-width: 40rem) {
   .swa-line { grid-template-columns: minmax(0, 1fr); }
   .swa-line .side { text-align: left; }
+  .swa-line.swa-deadline { grid-template-columns: 4.5rem minmax(0, 1fr); }
+  .swa-outside li { grid-template-columns: 7rem minmax(0, 1fr); }
   .stApp [class*="st-key-swa_sheet"] { padding: var(--space-md); }
   .swa-week { grid-template-columns: minmax(0, 1fr); }
   .swa-day { display: grid; grid-template-columns: 4.5rem minmax(0, 1fr); gap: var(--space-xs); padding: var(--space-sm) var(--space-xs); }

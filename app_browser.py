@@ -14,6 +14,7 @@ Start it with:   streamlit run app_browser.py
 import html
 import importlib
 import io
+import math
 import os
 from datetime import datetime, timedelta
 
@@ -354,13 +355,32 @@ def meeting_slots_for_home():
     return everyone
 
 
+def time_left_parts(item):
+    """How long until a deadline, as (number, words): (3, "days left"), (5, "hours left"), (2, "days overdue")."""
+    hours = item["hours_left"]
+    if hours < 0:
+        days = max(1, math.ceil(-hours / 24))
+        return days, "day overdue" if days == 1 else "days overdue"
+    if hours < 24:
+        whole = int(hours)
+        return whole, "hour left" if whole == 1 else "hours left"
+    days = int(hours // 24)
+    return days, "day left" if days == 1 else "days left"
+
+
+def time_left_label(item):
+    number, words = time_left_parts(item)
+    return f"{number} {words}"
+
+
 def day_items_html(day, deadlines, slots, today):
     """What happens on one day: deadlines by time, then the times the group can meet."""
     items = []
     for item in sorted((d for d in deadlines if d["due"].date() == day), key=lambda d: d["due"]):
         colour = DEADLINE_COLOURS[item["level"]]
         items.append(f'<li class="swa-due {colour}"><span class="time">{item["due"].strftime("%H:%M")}</span>'
-                     f'<b>{safe(item["title"])}</b><span class="course">{safe(item["course"])}</span></li>')
+                     f'<b>{safe(item["title"])}</b><span class="course">{safe(item["course"])}</span>'
+                     f'<span class="left">{time_left_label(item)}</span></li>')
     if day >= today:
         now = current_time()
         minute_now = now.hour * 60 + now.minute if day == today else 0
@@ -379,8 +399,7 @@ def week_strip_html():
     now = current_time()
     today = now.date()
     days = week_days(now)
-    deadlines = ([item for item in rated_deadlines() if item["level"] != "OVERDUE"]
-                 if st.session_state.deadlines else [])
+    deadlines = rated_deadlines() if st.session_state.deadlines else []
     slots = meeting_slots_for_home()
     busy_weekend = [day for day in days[5:]
                     if any(item["due"].date() == day for item in deadlines)]
@@ -392,9 +411,17 @@ def week_strip_html():
         columns.append(f'<section class="swa-day{" today" if is_today else ""}">'
                        f'<div class="swa-day-head"><h3>{core.DAYS[day.weekday()]} {day.day}</h3>{mark}</div>'
                        f'{day_items_html(day, deadlines, slots, today)}</section>')
-    later = sum(item["due"].date() > days[-1] for item in deadlines)
-    note = (f'<p class="swa-week-note">{later} more due after this week, in Deadlines.</p>'
-            if later else "")
+    # Deadlines before or after this week, so none is hidden: soonest first, with days left
+    outside = sorted((item for item in deadlines
+                      if item["due"].date() < days[0] or item["due"].date() > days[-1]),
+                     key=lambda item: item["due"])
+    note = ""
+    if outside:
+        rows = "".join(f'<li class="{DEADLINE_COLOURS[item["level"]]}"><span class="left">{time_left_label(item)}</span>'
+                       f'<b>{safe(item["title"])}</b><span class="course">{safe(item["course"])}, '
+                       f'due {item["due"].strftime("%a %d %b, %H:%M")}</span></li>' for item in outside)
+        note = f'<div class="swa-outside"><h3>Outside this week</h3><ul>{rows}</ul></div>'
+
     span = f'{days[0].day} to {days[-1].strftime("%d %B").lstrip("0")}'
     return (f'<div class="swa-week-head"><h2>This week</h2><p>{span}</p></div>'
             f'<div class="swa-week" style="--days:{len(shown)}">{"".join(columns)}</div>{note}')
@@ -618,7 +645,7 @@ def draw_meet_page():
 
 def deadline_line_html(item):
     """One deadline: its title and course, when it is due, and how much time is left."""
-    left = "overdue" if item["level"] == "OVERDUE" else core.time_left_text(item["hours_left"])
+    number, words = time_left_parts(item)
     meta = [item["course"], f'Due {item["due"].strftime("%a %d %b, %H:%M")}']
     notes = []
     if "free_hours" in item:
@@ -628,9 +655,10 @@ def deadline_line_html(item):
     colour = DEADLINE_COLOURS[item["level"]]
     meta_html = "".join(f"<span>{safe(part)}</span>" for part in meta)
     notes_html = f'<p class="meta">{safe(" ".join(notes))}</p>' if notes else ""
-    return (f'<div class="swa-line"><div><p class="title">{safe(item["title"])}</p>'
-            f'<p class="meta">{meta_html}</p>{notes_html}</div>'
-            f'<div class="side">{badge(left, colour)}</div></div>')
+    return (f'<div class="swa-line swa-deadline"><p class="swa-left {colour}">'
+            f'<span class="num">{number}</span><span class="unit">{words}</span></p>'
+            f'<div><p class="title">{safe(item["title"])}</p>'
+            f'<p class="meta">{meta_html}</p>{notes_html}</div></div>')
 
 
 def draw_deadlines_page():
@@ -643,14 +671,10 @@ def draw_deadlines_page():
                 "3. Click **Export** and upload the file in **My data**.", icon=":material/info:")
         st.button("Go to My data", icon=":material/upload_file:", on_click=go_to, args=("data",))
         return
-    rated = rated_deadlines()
-    overdue = sum(item["level"] == "OVERDUE" for item in rated)
-    show_old = st.toggle(f"Show overdue entries ({overdue})", value=False)
-    # One group per due window: overdue (when shown), within 2 days, this week, later
+    rated = sorted(rated_deadlines(), key=lambda item: item["due"])
+    # Every deadline, one group per due window: overdue, within 2 days, this week, later
     groups = []
     for level, label in DEADLINE_LABELS.items():
-        if level == "OVERDUE" and not show_old:
-            continue
         items = [item for item in rated if item["level"] == level]
         if items:
             lines = "".join(deadline_line_html(item) for item in items)
