@@ -1,4 +1,4 @@
-CASE: Unusual input that must give a friendly message, never a crash: a comma in a course name (timetable and attendance file), and site answers of an unexpected shape from the attendance site, Smart LMS and nsmart (invented data)
+CASE: Unusual input that must give a friendly message, never a crash: a comma in a course name (timetable and attendance file), and site answers of an unexpected shape from the attendance site (invented data)
 
 Timetable of Comma: 2 class blocks
   Mon 09:00-10:30  Python, Advanced
@@ -8,6 +8,3 @@ Meeting finder: ERROR - Add at least two timetables to find a meeting time.
 comma_attendance.csv: ERROR - The attendance file has mistakes:
   line 2: this line has more values than there are columns. If a course name has a comma in it, put the name in quotes, like "Python, Advanced".
 site_course_missing_times.json: ERROR - The attendance site sent an answer this app could not read. Use a timetable screenshot instead.
-lms_time_not_a_number.json: ERROR - Smart LMS sent an answer this app could not read. Upload the calendar file instead.
-canvas_text_item.json: ERROR - nsmart.wsu.ac.kr sent an answer this app could not read. Upload the calendar file instead.
-canvas_bad_date.json: ERROR - nsmart.wsu.ac.kr sent an answer this app could not read. Upload the calendar file instead.

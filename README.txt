@@ -27,7 +27,8 @@ FILES
                        powershell -ExecutionPolicy Bypass -File packaging\build_windows.ps1
                      Needs Python and Inno Setup 6. The result is in dist\.
   requirements.txt   The libraries to install
-  test_cases/        Nine test cases with input files and expected output
+  test_cases/        Seven test cases with input files and expected output
+  test_passkey.py    Tests the i-ONE PASS sign-in against a faked university site
   README.txt         This file
 
 
@@ -76,11 +77,16 @@ HOW TO GET YOUR OWN DATA IN
          Mon,10:00,12:00,Marketing Principles
 
   Deadlines - choose one:
-    a) The same login as above also gets your deadlines from both Smart LMS
-       sites, smart.wsu.ac.kr and nsmart.wsu.ac.kr, and puts them in one
-       list. If only one site accepts the login, its deadlines are still
-       shown. Nothing else to do.
-    b) Or upload the calendar file by hand:
+    a) The same login as above then asks you to approve the Smart LMS
+       sign-in in the i-ONE PASS app on your phone (passkey, no password).
+       Click OK in the app window and your smart.wsu.ac.kr deadlines load.
+    b) For nsmart.wsu.ac.kr (or without your phone): paste your personal
+       calendar links on the My data page. They work without signing in.
+       smart.wsu.ac.kr:  Calendar > Export calendar > Get calendar URL
+       nsmart.wsu.ac.kr: Calendar > Calendar feed (bottom right)
+       Each link is personal, like a password: never share it.
+       Deadlines from the login and the links are added together.
+    c) Or upload the calendar file by hand:
     1. Open smart.wsu.ac.kr and go to Calendar.
     2. Click "Export calendar", choose "All events" and
        "Recent and next 60 days", then click "Export".
@@ -107,6 +113,7 @@ RULES THE TOOL USES
 TEST CASES
 ----------
   Run them all:   python project_code.py --test
+  i-ONE PASS:     python test_passkey.py   (prints PASSKEY OK)
 
   Each folder in test_cases/ contains the input files, case.json (which files
   to use) and expected_output.txt. The test runner writes actual_output.txt
@@ -125,13 +132,8 @@ TEST CASES
   case5_unusual_but_valid  Edge: member with no classes, classes outside the
                            day, attendance exactly at the limit and one over,
                            lates turning into absences, empty calendar
-  case6_smart_lms          Deadlines from saved Smart LMS answers, an error
-                           answer, an empty list, a good and a wrong login
-  case7_new_smart_lms      Deadlines from saved nsmart.wsu.ac.kr answers, an
-                           error answer, an empty list, a good and a wrong
-                           login, and both sites together (no double entries)
   case8_odd_inputs         Errors: a comma in a course name, and site answers
-                           of an unexpected shape from all three sites
+                           of an unexpected shape from the attendance site
   case9_calendar_links     Passkey login: an nsmart calendar feed, and which
                            Smart LMS calendar links the app agrees to open
 
@@ -141,9 +143,11 @@ TEST CASES
 PRIVACY AND SAFETY
 ------------------
   - The app runs on your own computer. Nothing is sent anywhere except the
-    login requests to the university attendance site and the two Smart LMS
-    sites (https).
-  - The password is used for that one request and is never written to a file.
+    login to the attendance site, the i-ONE PASS sign-in to Smart LMS
+    (sso.wsu.ac.kr and smart.wsu.ac.kr) and the calendar links you paste
+    (all https).
+  - The password goes to the attendance site only, for that one request, and
+    is never written to a file. Smart LMS uses i-ONE PASS, not the password.
   - Each student logs in only to their own account.
 
 
@@ -152,8 +156,10 @@ KNOWN LIMITS
   - The screenshot reader expects a full, uncropped screenshot of the
     Timetable page (Monday to Friday, starting at 9:00). Times are rounded to
     5 minutes. Heavily compressed pictures can be a few minutes off.
-  - Deadlines by login use the Smart LMS login page with the same ID and
-    password. If your Smart LMS password is different, or Smart LMS changes
-    its login, the tool says so and you can upload the calendar file instead.
+  - Deadlines by login use the i-ONE PASS sign-in (since December 2026
+    Smart LMS needs a passkey). It reads smart.wsu.ac.kr only; use the
+    calendar link for nsmart.wsu.ac.kr. If the university changes its
+    sign-in page, the tool says so and you can use the calendar links or
+    upload the calendar file instead.
   - If the attendance site changes its pages, the login option may stop
     working. The screenshot and file options keep working.

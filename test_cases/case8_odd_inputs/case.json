@@ -1,9 +1,7 @@
 {
-  "description": "Unusual input that must give a friendly message, never a crash: a comma in a course name (timetable and attendance file), and site answers of an unexpected shape from the attendance site, Smart LMS and nsmart (invented data)",
+  "description": "Unusual input that must give a friendly message, never a crash: a comma in a course name (timetable and attendance file), and site answers of an unexpected shape from the attendance site (invented data)",
   "today": "2026-11-16 09:00",
   "timetables": ["comma_course.csv"],
   "attendance_files": ["comma_attendance.csv"],
-  "site_course_replies": ["site_course_missing_times.json"],
-  "lms_event_replies": ["lms_time_not_a_number.json"],
-  "canvas_replies": ["canvas_text_item.json", "canvas_bad_date.json"]
+  "site_course_replies": ["site_course_missing_times.json"]
 }

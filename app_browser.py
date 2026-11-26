@@ -146,7 +146,7 @@ def load_demo_week():
 def clear_everything():
     upload_round = st.session_state.upload_round + 1     # new round = empty upload boxes
     for key in ("group", "my_name", "deadlines", "attendance", "demo", "loaded_files",
-                "member_sources"):
+                "member_sources", "login_notes", "passkey_login"):
         st.session_state.pop(key, None)
     start_memory()
     st.session_state.upload_round = upload_round
@@ -234,8 +234,8 @@ def steps_html(steps):
 
 
 def draw_welcome():
-    steps = [("Log in once", "Your student ID gets your timetable and attendance. "
-              "Paste your Smart LMS calendar links for deadlines."),
+    steps = [("Log in once", "Your student ID and password get your timetable and attendance. "
+              "Approve the Smart LMS sign-in on your phone (i-ONE PASS) for deadlines."),
              ("Or upload files", "A timetable screenshot and the Smart LMS calendar (.ics)."),
              ("Add your teammates", "Upload their timetable files in the Meet page.")]
     with st.container(key="swa_sheet_welcome"):
@@ -750,34 +750,21 @@ def draw_data_status():
 
 
 def get_from_attendance_site(student_id, password):
-    """Timetable and attendance from att.wsu.ac.kr. Returns the problem text, or None."""
+    """Timetable and attendance from att.wsu.ac.kr. Returns the notes to show: (kind, text)."""
     try:
         with st.spinner("Getting your timetable and attendance..."):
             result = core.fetch_from_site(student_id, password)
     except core.InputError as problem:
-        return f"Attendance site: {problem}"
+        return [("warning", f"Attendance site: {problem}")]
     name = result["name"] or "Me"
     st.session_state.my_name = name
     st.session_state.group[name] = result["timetable"]
     st.session_state.attendance = result["attendance"]
-    st.success(f"Timetable and attendance loaded: {len(result['attendance'])} courses for {name}.")
+    notes = [("success", f"Timetable and attendance loaded: {len(result['attendance'])} courses for {name}.")]
     if result["skipped"]:
-        st.info("These courses had no class times or attendance to read and were left out: "
-                + ", ".join(result["skipped"]) + ".")
-    return None
-
-
-def get_from_smart_lms(student_id, password):
-    """Deadlines from smart.wsu.ac.kr and nsmart.wsu.ac.kr. Returns the problems if both failed."""
-    with st.spinner("Getting your deadlines from Smart LMS (smart and nsmart)..."):
-        deadlines, problems = core.fetch_all_deadlines(student_id, password)
-    if len(problems) == len(core.DEADLINE_SITES):      # neither site worked
-        return problems
-    st.session_state.deadlines = deadlines
-    st.success(f"Deadlines loaded from Smart LMS: {len(deadlines)} entries.")
-    for problem in problems:                           # the other site still worked
-        st.info(problem)
-    return []
+        notes = notes + [("info", "These courses had no class times or attendance to read and were "
+                                  "left out: " + ", ".join(result["skipped"]) + ".")]
+    return notes
 
 
 def show_login_problems(problems):
@@ -792,32 +779,66 @@ def show_login_problems(problems):
 
 def draw_login_box():
     with st.container(key="swa_sheet_login"):
-        st.subheader("Option 1: log in once", anchor=False)
-        st.caption("Gets your timetable and attendance from att.wsu.ac.kr, and tries your deadlines "
-                   "from smart.wsu.ac.kr and nsmart.wsu.ac.kr (until passkey login is required). "
-                   "Your password is used for these requests only and is never saved.")
+        st.subheader("Option 1: log in once, get everything", anchor=False)
+        st.caption("Your student ID and password get your timetable and attendance (att.wsu.ac.kr). "
+                   "Then approve the Smart LMS sign-in in the i-ONE PASS app on your phone to get "
+                   "your deadlines. Your password is used for the attendance site only and is never saved.")
         with st.form("login_form", clear_on_submit=True, border=False):
             # autocomplete off: the browser should not suggest saved IDs or passwords here
             student_id = st.text_input("Student ID", autocomplete="off")
             password = st.text_input("Password", type="password", autocomplete="off")
             pressed = st.form_submit_button("Get my data", icon=":material/login:", type="primary")
-        if not pressed:
-            return
-        if not student_id.strip() or not password:
-            st.error("Type both your student ID and your password.")
-            return
-        if st.session_state.demo:              # never mix the demo students with real data
-            clear_everything()
-            st.session_state.page = "data"
-        attendance_problem = get_from_attendance_site(student_id, password)
-        lms_problems = get_from_smart_lms(student_id, password)
-        if attendance_problem:
-            show_login_problems([attendance_problem] + lms_problems)
-        elif lms_problems:                     # attendance worked; Smart LMS now needs a passkey
-            st.info("Deadlines could not be loaded with this login:\n"
-                    + "\n".join(f"- {text}" for text in lms_problems)
-                    + "\n\nSmart LMS now asks for a passkey, so use the calendar links below.",
-                    icon=":material/info:")
+        if pressed:
+            if student_id.strip() and password:
+                log_in(student_id, password)
+            else:
+                st.session_state.login_notes = [("error", "Type both your student ID and your password.")]
+        for kind, text in st.session_state.get("login_notes", []):   # kept until the next login
+            getattr(st, kind)(text)
+        if st.session_state.get("passkey_login"):
+            passkey_dialog()
+
+
+def log_in(student_id, password):
+    """The password for the attendance site, then i-ONE PASS on the phone for Smart LMS."""
+    if st.session_state.demo:                  # never mix the demo students with real data
+        clear_everything()
+        st.session_state.page = "data"
+    notes = get_from_attendance_site(student_id, password)
+    try:                                       # Smart LMS signs in with i-ONE PASS on the phone
+        with st.spinner("Sending the Smart LMS sign-in to your i-ONE PASS app..."):
+            st.session_state.passkey_login = core.passkey_start(student_id)
+    except core.InputError as problem:
+        notes = notes + [("warning", f"Smart LMS (i-ONE PASS): {problem} "
+                                     "You can paste your calendar links below instead.")]
+    st.session_state.login_notes = notes
+
+
+@st.dialog("i-ONE PASS", dismissible=False)
+def passkey_dialog():
+    st.markdown("**Please approve the Smart LMS sign-in in the i-ONE PASS app on your phone.**")
+    st.write("When you have approved it, click OK.")
+    ok, cancel = st.columns(2)
+    if cancel.button("Cancel", width="stretch"):
+        st.session_state.passkey_login = None
+        st.rerun()
+    if not ok.button("OK", type="primary", width="stretch"):
+        return
+    try:
+        with st.spinner("Getting your Smart LMS calendar..."):
+            found = core.passkey_finish(st.session_state.passkey_login)
+    except core.PasskeyWaiting as problem:
+        st.warning(str(problem))               # the dialog stays open: approve, then OK again
+        return
+    except core.InputError as problem:
+        note = ("warning", f"Smart LMS (i-ONE PASS): {problem}")
+    else:
+        # add to what the calendar links gave (nsmart), do not replace it
+        st.session_state.deadlines = core.merge_deadlines(st.session_state.deadlines, found)
+        note = ("success", f"Deadlines loaded from Smart LMS: {len(found)} entries.")
+    st.session_state.passkey_login = None
+    st.session_state.login_notes = st.session_state.get("login_notes", []) + [note]
+    st.rerun()
 
 
 LINK_STEPS = ("**smart.wsu.ac.kr:** open **Calendar**, click **Export calendar**, choose *All events* "
@@ -830,9 +851,9 @@ LINK_STEPS = ("**smart.wsu.ac.kr:** open **Calendar**, click **Export calendar**
 def draw_links_box():
     """Deadlines from the Smart LMS calendar links: no password, so it works with passkey login."""
     with st.container(key="swa_sheet_links"):
-        st.subheader("Deadlines with passkey login: calendar links", anchor=False)
-        st.caption("Smart LMS now asks for a passkey (I-ONE PASS), so this app cannot log in there. "
-                   "Paste your personal calendar links instead; they work without a password.")
+        st.subheader("Or: calendar links", anchor=False)
+        st.caption("No phone at hand? Paste your personal calendar links instead; "
+                   "they work without signing in.")
         with st.expander("Where do I find my calendar links?", icon=":material/help:"):
             st.markdown(LINK_STEPS)
         with st.form("links_form", border=False):
@@ -851,7 +872,8 @@ def draw_links_box():
         with st.spinner("Getting your deadlines from the calendar links..."):
             deadlines, problems = core.fetch_deadlines_from_links([smart_link, nsmart_link])
         if deadlines or not problems:
-            st.session_state.deadlines = deadlines
+            # add to what the i-ONE PASS login gave (smart), do not replace it
+            st.session_state.deadlines = core.merge_deadlines(st.session_state.deadlines, deadlines)
             st.success(f"Deadlines loaded from your calendar links: {len(deadlines)} entries.")
         show_login_problems(problems)
 
@@ -945,8 +967,9 @@ def draw_help_page():
             "System, Light or Dark. System follows your computer's setting.",
             icon=":material/contrast:")
     st.info("Privacy: the app runs on your own computer. Nothing is sent anywhere except the "
-            "login requests to the attendance site (att.wsu.ac.kr) and the two Smart LMS sites "
-            "(smart.wsu.ac.kr and nsmart.wsu.ac.kr), and your password is never written to a file.",
+            "login to the attendance site (att.wsu.ac.kr), the i-ONE PASS sign-in to Smart LMS "
+            "(sso.wsu.ac.kr and smart.wsu.ac.kr) and the calendar links you paste. Your password "
+            "goes to the attendance site only and is never written to a file.",
             icon=":material/lock:")
 
 

@@ -194,8 +194,10 @@ cannot open it. If Windows Firewall still asks about Python, you can click
 2. Click **Exit demo** when you are done looking around.
 3. To use your own data, go to **My data**:
    - **Option 1:** log in with your own student ID and password. The app reads
-     your timetable, attendance and Smart LMS deadlines. The password is only
-     used for that one request and is never saved.
+     your timetable and attendance, then asks you to approve the Smart LMS
+     sign-in in the **i-ONE PASS** app on your phone; click **OK** and your
+     deadlines load. The password goes to the attendance site only and is
+     never saved. For nsmart deadlines, paste your calendar links below the login.
    - **Option 2:** upload a timetable screenshot and the Smart LMS calendar
      file (`.ics`) instead.
 4. **Group meeting:** on **My data**, click **Save my timetable file** and send
@@ -248,7 +250,8 @@ Then type `1`. Change the `cd` path if you put the folder somewhere else.
 | The app looks plain or shows a sidebar | You have an old copy. Ask for the newest zip, delete the old folder and unzip again. |
 | Mac: "cannot be opened because it is from an unidentified developer" | Do not double-click the `.py` files. Always start the app from Terminal as in Step 5. |
 | Windows: the folder has a zipper icon / "file is read-only" | You are inside the zip, not the unzipped folder. Use **Extract All...** (Part 1, A step 2). |
-| "Smart LMS did not accept this ID and password" | Your Smart LMS password may differ. Upload the calendar `.ics` file on **My data** instead. |
+| "Approve the sign-in on the i-ONE PASS app first" | Open i-ONE PASS on your phone, approve the request, then click **OK** again. |
+| "The university sign-in page has changed" | Paste your calendar links or upload the calendar `.ics` file on **My data** instead. |
 | Browser shows "This site can't be reached" | The app is not running. Check the Terminal window for errors and start it again. |
 
 Still stuck? Send a screenshot of the Terminal / Command Prompt window to the

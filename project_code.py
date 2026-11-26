@@ -29,14 +29,14 @@ How to run
 """
 
 import csv
-import html
 import io
 import json
 import os
 import re
 import sys
 from datetime import datetime, timedelta, timezone
-from urllib.parse import urlsplit
+from html.parser import HTMLParser
+from urllib.parse import urljoin, urlsplit
 
 # ----------------------------------------------------------------------------
 # PART 1 - SETTINGS (change the rules here, not inside the functions)
@@ -518,11 +518,15 @@ def parse_calendar_time(value, parameters):
 
 
 def clean_deadline_title(title):
-    """ "Essay is due" -> "Essay" (Smart LMS adds these endings to every deadline)."""
+    """ "Essay is due" -> "Essay" (Smart LMS adds these endings to every deadline).
+
+    Teachers also write "**Final Project **" for emphasis; the stars are dropped.
+    """
     for ending in (" is due", " closes", " 마감"):
         if title.endswith(ending):
             title = title[: -len(ending)]
-    return title
+    return " ".join(title.replace("*", " ").split())
+
 
 
 def split_course_brackets(title):
@@ -535,6 +539,12 @@ def split_course_brackets(title):
                 break                              # no closing bracket at the end
             return title[:index - 1], title[index + 1:-1]
     return title, None
+
+
+def short_course(name):
+    """ "ProgrammingforBusiness (2026-20, 0013837_001_120_...)" -> "ProgrammingforBusiness" (Smart LMS codes)."""
+    return re.sub(r"\s*\(\d{4}-\d{1,2},[^()]*\)\s*$", "", name) if name else name
+
 
 
 def load_deadlines(source):
@@ -566,7 +576,7 @@ def load_deadlines(source):
                 title, course = event["title"], event.get("course")
                 if course is None:                 # nsmart writes "Essay [Course name]"
                     title, course = split_course_brackets(title)
-                deadlines.append({"title": title, "course": course or "General",
+                deadlines.append({"title": title, "course": short_course(course) or "General",
                                   "due": event["due"]})
             event = None
         elif event is not None and ":" in line:
@@ -834,196 +844,11 @@ def fetch_from_site(student_id, password):
             "attendance": attendance, "skipped": skipped}
 
 
-# ----------------------------------------------------------------------------
-# PART 7B - TALKING TO SMART LMS (deadlines)
-# Smart LMS is a Moodle site. We log in on its normal login page with the
-# same ID and password, then ask for the upcoming activities, the same list
-# the "Timeline" block on the Smart LMS dashboard shows.
-# The password is used once for the login request and is never saved.
-# ----------------------------------------------------------------------------
-
-def read_lms_login_token(page_html):
-    """Find the hidden logintoken that the Smart LMS login form needs."""
-    match = re.search(r'name="logintoken" value="([^"]*)"', page_html)
-    if not match:
-        raise InputError("The Smart LMS login page could not be read right now. "
-                         "Upload the calendar file instead.")
-    return match.group(1)
-
-
-def read_lms_sesskey(page_html):
-    """After a good login every Smart LMS page has a logout link with the session key."""
-    match = re.search(r"logout\.php\?sesskey=([A-Za-z0-9]+)", page_html)
-    if not match:
-        raise LoginError("Smart LMS did not accept this ID and password. If your Smart LMS "
-                         "password is different, upload the calendar file instead.")
-    return match.group(1)
-
-
-@reads_site_answer(SMART_ANSWER_UNREADABLE)
-def read_lms_events_reply(reply):
-    """Turn Smart LMS's list of upcoming activities into deadlines.
-
-    Returns a list of {"title", "course", "due"} sorted by due date, the same
-    shape as load_deadlines().
-    """
-    answer = reply[0] if isinstance(reply, list) and reply else {}
-    if answer.get("error") or "data" not in answer:
-        raise InputError("Smart LMS did not send the deadlines. Upload the calendar file instead.")
-    deadlines = []
-    for event in (answer["data"] or {}).get("events") or []:
-        moment = event.get("timesort") or event.get("timestart")
-        if not moment or not event.get("name"):
-            continue                       # not a deadline we can place in time
-        due = datetime.fromtimestamp(int(moment), KOREA_TIME).replace(tzinfo=None)
-        course = (event.get("course") or {}).get("fullname") or "General"
-        deadlines.append({"title": clean_deadline_title(html.unescape(event["name"])),
-                          "course": html.unescape(course), "due": due})
-    return sorted(deadlines, key=lambda item: item["due"])
-
-
-def fetch_deadlines_from_lms(student_id, password):
-    """Log in to Smart LMS and collect the deadlines of the coming weeks."""
-    try:
-        import requests
-    except ImportError:
-        raise InputError("Logging in needs the requests library. Run: pip install requests")
-    if not student_id.strip() or not password:
-        raise LoginError("Type both your student ID and your password.")
-
-    session = requests.Session()           # keeps the login cookie for the next requests
-    try:
-        page = session.get(f"{SMART_LMS_SITE}/login/index.php", timeout=20)
-        token = read_lms_login_token(page.text)
-        page = session.post(f"{SMART_LMS_SITE}/login/index.php", timeout=20,
-                            data={"anchor": "", "logintoken": token,
-                                  "username": student_id.strip(), "password": password})
-        sesskey = read_lms_sesskey(page.text)
-
-        now = datetime.now(KOREA_TIME)
-        method = "core_calendar_get_action_events_by_timesort"
-        question = [{"index": 0, "methodname": method, "args": {
-            "timesortfrom": int((now - timedelta(days=DEADLINE_DAYS_BACK)).timestamp()),
-            "timesortto": int((now + timedelta(days=DEADLINE_DAYS_AHEAD)).timestamp()),
-            "limitnum": SMART_LMS_MAX_EVENTS}}]
-        answer = session.post(f"{SMART_LMS_SITE}/lib/ajax/service.php", timeout=20,
-                              params={"sesskey": sesskey, "info": method}, json=question)
-        answer.raise_for_status()
-        return read_lms_events_reply(answer.json())
-    except InputError:
-        raise                              # already a message for the student
-    except (requests.RequestException, ValueError):
-        raise InputError("Smart LMS could not be reached. Check your internet connection, "
-                         "or upload the calendar file instead.")
-
-
-# ----------------------------------------------------------------------------
-# PART 7C - TALKING TO THE NEW SMART LMS (nsmart.wsu.ac.kr, deadlines)
-# This second site is a Canvas site. We log in on its normal login page with
-# the same ID and password, then ask for the planner list (the "To Do" list
-# on its dashboard). The password is used once and is never saved.
-# ----------------------------------------------------------------------------
-
-def read_canvas_login_token(page_html):
-    """Find the hidden authenticity_token that the nsmart login form needs."""
-    match = re.search(r'name="authenticity_token" value="([^"]*)"', page_html)
-    if not match:
-        raise InputError("The nsmart.wsu.ac.kr login page could not be read right now. "
-                         "Upload the calendar file instead.")
-    return html.unescape(match.group(1))
-
-
-def read_canvas_user(page_html):
-    """After a good login the page names the student's user number."""
-    match = re.search(r'"current_user_id":"(\d+)"', page_html)
-    if not match:
-        raise LoginError("nsmart.wsu.ac.kr did not accept this ID and password. If your "
-                         "nsmart password is different, upload the calendar file instead.")
-    return match.group(1)
-
-
-@reads_site_answer(NSMART_ANSWER_UNREADABLE)
-def read_canvas_planner_reply(reply):
-    """Turn the nsmart planner list into deadlines, the same shape as load_deadlines()."""
-    if not isinstance(reply, list):
-        raise InputError("nsmart.wsu.ac.kr did not send the deadlines. "
-                         "Upload the calendar file instead.")
-    deadlines = []
-    for item in reply:
-        work = item.get("plannable") or {}
-        title = work.get("title") or work.get("name")
-        moment = item.get("plannable_date") or work.get("due_at")
-        if item.get("plannable_type") not in NEW_SMART_LMS_WORK_TYPES or not title or not moment:
-            continue                       # not work to hand in, or no date to place it
-        due = datetime.fromisoformat(moment.replace("Z", "+00:00"))
-        deadlines.append({"title": clean_deadline_title(html.unescape(title)),
-                          "course": html.unescape(item.get("context_name") or "General"),
-                          "due": due.astimezone(KOREA_TIME).replace(tzinfo=None)})
-    return sorted(deadlines, key=lambda entry: entry["due"])
-
-
-@reads_site_answer(NSMART_ANSWER_UNREADABLE)
-def read_canvas_json(text):
-    """Canvas puts 'while(1);' in front of its answers; remove it before reading."""
-    return json.loads(text.removeprefix("while(1);"))
-
-
-def fetch_deadlines_from_canvas(student_id, password):
-    """Log in to nsmart.wsu.ac.kr and collect the deadlines of the coming weeks."""
-    try:
-        import requests
-    except ImportError:
-        raise InputError("Logging in needs the requests library. Run: pip install requests")
-    if not student_id.strip() or not password:
-        raise LoginError("Type both your student ID and your password.")
-
-    session = requests.Session()           # keeps the login cookie for the next requests
-    try:
-        page = session.get(f"{NEW_SMART_LMS_SITE}/login/canvas", timeout=20)
-        token = read_canvas_login_token(page.text)
-        page = session.post(f"{NEW_SMART_LMS_SITE}/login/canvas", timeout=20, data={
-            "utf8": "✓", "authenticity_token": token,
-            "pseudonym_session[unique_id]": student_id.strip(),
-            "pseudonym_session[password]": password,
-            "pseudonym_session[remember_me]": "0"})
-        read_canvas_user(page.text)
-
-        now = datetime.now(KOREA_TIME)
-        answer = session.get(f"{NEW_SMART_LMS_SITE}/api/v1/planner/items", timeout=20, params={
-            "start_date": (now - timedelta(days=DEADLINE_DAYS_BACK)).isoformat(),
-            "end_date": (now + timedelta(days=DEADLINE_DAYS_AHEAD)).isoformat(),
-            "per_page": NEW_SMART_LMS_MAX_ITEMS})
-        answer.raise_for_status()
-        return read_canvas_planner_reply(read_canvas_json(answer.text))
-    except InputError:
-        raise                              # already a message for the student
-    except (requests.RequestException, ValueError):
-        raise InputError("nsmart.wsu.ac.kr could not be reached. Check your internet "
-                         "connection, or upload the calendar file instead.")
-
-
 def merge_deadlines(*lists):
     """One list from several sites, without the same deadline twice, sorted by date."""
     unique = {(d["title"], d["course"], d["due"]): d for found in lists for d in found}
     return sorted(unique.values(), key=lambda entry: entry["due"])
 
-
-# Both Smart LMS sites; a course can use either one. Each message names its site.
-DEADLINE_SITES = (fetch_deadlines_from_lms, fetch_deadlines_from_canvas)
-
-
-def fetch_all_deadlines(student_id, password):
-    """Deadlines from both Smart LMS sites.
-
-    Returns (deadlines, problems): one site failing does not lose the other.
-    """
-    found, problems = [], []
-    for fetch in DEADLINE_SITES:
-        try:
-            found = found + [fetch(student_id, password)]
-        except InputError as problem:
-            problems = problems + [str(problem)]
-    return merge_deadlines(*found), problems
 
 
 # ----------------------------------------------------------------------------
@@ -1074,6 +899,164 @@ def fetch_deadlines_from_links(links):
         except InputError as problem:
             problems = problems + [str(problem)]
     return merge_deadlines(*found), problems
+
+
+# ----------------------------------------------------------------------------
+# PART 7E - SMART LMS WITH i-ONE PASS (passkey) SIGN-IN
+# The student types their ID and approves the push on their own phone; the app
+# then downloads their Smart LMS calendar. Nothing is saved: the sign-in lives
+# only in the requests.Session kept for this browser tab, and no password is used.
+# Steps copied from the sign-in page at sso.wsu.ac.kr (November 2026).
+# ----------------------------------------------------------------------------
+
+SSO_SITE = "https://sso.wsu.ac.kr"
+SMART_SITE = "https://smart.wsu.ac.kr"
+SIGN_IN_HOSTS = ("sso.wsu.ac.kr", "smart.wsu.ac.kr")
+BROWSER_AGENT = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                 "(KHTML, like Gecko) Chrome/130 Safari/537.36")   # the SSO page refuses unknown clients
+AJAX = {"X-Requested-With": "XMLHttpRequest"}
+PUSH_NOT_YET = {"1012", "1013"}           # the site's codes for "not approved on the phone yet"
+KOREA_TIME_OFFSET = "-540"                # what a browser in Korea sends as getTimezoneOffset()
+SIGN_IN_CHANGED = ("The university sign-in page has changed and this app cannot use it now. "
+                   "Use a calendar link or upload the calendar file instead.")
+
+
+class PasskeyWaiting(InputError):
+    """The phone has not approved the sign-in yet; ask again after the student taps OK."""
+
+
+class _FormReader(HTMLParser):
+    """Collects every <form> with its action and the names/values of its inputs."""
+
+    def __init__(self, base_url):
+        super().__init__()
+        self.base_url, self.forms, self.current = base_url, [], None
+
+    def handle_starttag(self, tag, attrs):
+        attrs = dict(attrs)
+        if tag == "form":
+            self.current = {"id": attrs.get("id") or attrs.get("name") or "",
+                            "action": urljoin(self.base_url, attrs.get("action") or ""),
+                            "fields": {}, "hidden_only": True}
+            self.forms.append(self.current)
+        elif tag == "input" and self.current is not None:
+            if (attrs.get("type") or "text") != "hidden":
+                self.current["hidden_only"] = False
+            if attrs.get("name"):
+                self.current["fields"][attrs["name"]] = attrs.get("value") or ""
+
+    def handle_endtag(self, tag):
+        if tag == "form":
+            self.current = None
+
+
+def read_forms(html, base_url):
+    reader = _FormReader(base_url)
+    reader.feed(html)
+    return reader.forms
+
+
+def _sign_in_request(session, method, url, **options):
+    """One request to the university sign-in; only its two sites are ever contacted."""
+    import requests
+    if urlsplit(url).hostname not in SIGN_IN_HOSTS:
+        raise InputError(SIGN_IN_CHANGED)
+    try:
+        answer = session.request(method, url, timeout=20, allow_redirects=False, **options)
+        while answer.is_redirect:              # follow redirects only within the two sites
+            url = urljoin(answer.url, answer.headers["Location"])
+            if urlsplit(url).hostname not in SIGN_IN_HOSTS:
+                raise InputError(SIGN_IN_CHANGED)
+            answer = session.request("GET", url, timeout=20, allow_redirects=False)
+        answer.raise_for_status()
+        return answer
+    except requests.RequestException:
+        raise InputError("The university sign-in could not be reached. Check your internet connection.")
+
+
+def _push_reply(answer):
+    """i-ONE PASS answers {"returnCode", "resultMsg", "tId"}. Returns (code, message, tId)."""
+    try:
+        reply = answer.json()
+        return str(reply.get("returnCode")), reply.get("resultMsg") or "", reply.get("tId") or ""
+    except (ValueError, AttributeError):
+        raise InputError(SIGN_IN_CHANGED)
+
+
+def _form_named(answer, form_id):
+    return next((f for f in read_forms(answer.text, answer.url) if f["id"] == form_id), None)
+
+
+def passkey_start(student_id):
+    """Send the i-ONE PASS push to the student's phone. Returns what passkey_finish needs."""
+    student_id = student_id.strip()
+    if not student_id.isalnum() or len(student_id) > 10:
+        raise InputError("Type your student ID (letters and numbers only).")
+    try:
+        import requests
+    except ImportError:
+        raise InputError("Signing in needs the requests library. Run: pip install requests")
+    session = requests.Session()
+    session.headers["User-Agent"] = BROWSER_AGENT
+    page = _sign_in_request(session, "GET", f"{SMART_SITE}/exsignon/sso/sso_index.php")
+    hand_over = _form_named(page, "idpLoginFrm")           # Smart LMS hands the student to the SSO
+    if hand_over is None:
+        raise InputError(SIGN_IN_CHANGED)
+    page = _sign_in_request(session, "POST", hand_over["action"], data=hand_over["fields"],
+                            headers={"Referer": page.url})
+    login_form = _form_named(page, "loginFrm")
+    if login_form is None or "l_token" not in login_form["fields"]:
+        raise InputError(SIGN_IN_CHANGED)
+    code, message, push_id = _push_reply(_sign_in_request(
+        session, "POST", f"{SSO_SITE}/wsu/IOnePassPush.eps", data={"user_id": student_id},
+        headers={**AJAX, "Referer": page.url}))
+    if code != "0000":
+        raise InputError(message or "i-ONE PASS could not send the request to your phone.")
+    return {"session": session, "push_id": push_id, "login_form": login_form, "referer": page.url}
+
+
+def passkey_finish(started):
+    """After the student approved on the phone: finish signing in and return their deadlines.
+
+    Raises PasskeyWaiting when the phone has not approved yet (ask again later).
+    """
+    session = started["session"]
+    code, message, _ = _push_reply(_sign_in_request(
+        session, "POST", f"{SSO_SITE}/wsu/IOnePassChkAuth.eps", data={"tId": started["push_id"]},
+        headers={**AJAX, "Referer": started["referer"]}))
+    if code in PUSH_NOT_YET:
+        raise PasskeyWaiting(message or "Approve the sign-in on the i-ONE PASS app first, then click OK.")
+    if code != "0000":
+        raise InputError(message or "i-ONE PASS did not approve the sign-in. Try again.")
+    form = started["login_form"]
+    answer = _sign_in_request(session, "POST", form["action"],
+                              data={**form["fields"], "user_timezone_offset": KOREA_TIME_OFFSET,
+                                    "ssoOption": "01"},          # 01 = passkey, no second step
+                              headers={"Referer": started["referer"]})
+    # The SSO may hand back to Smart LMS with a self-sending form instead of a redirect
+    for _ in range(4):
+        on_smart = urlsplit(answer.url).hostname == "smart.wsu.ac.kr"
+        forms = [f for f in read_forms(answer.text, answer.url)
+                 if f["hidden_only"] and f["fields"] and f["id"] != "loginFrm"
+                 and (not on_smart or f["id"] == "idpLoginFrm")]
+        if len(forms) != 1:
+            break
+        answer = _sign_in_request(session, "POST", forms[0]["action"], data=forms[0]["fields"],
+                                  headers={"Referer": answer.url})
+    return smart_calendar(session)
+
+
+def smart_calendar(session):
+    """Download the signed-in student's calendar from Smart LMS (Moodle's own export form)."""
+    page = _sign_in_request(session, "GET", f"{SMART_SITE}/calendar/export.php")
+    form = next((f for f in read_forms(page.text, page.url)
+                 if "_qf__core_calendar_export_form" in f["fields"]), None)
+    if form is None or not form["fields"].get("sesskey"):
+        raise InputError("The sign-in did not finish, so Smart LMS did not open. Try again.")
+    answer = _sign_in_request(session, "POST", form["action"], data={
+        "sesskey": form["fields"]["sesskey"], "_qf__core_calendar_export_form": "1",
+        "events[exportevents]": "all", "period[timeperiod]": "recentupcoming", "export": "Export"})
+    return load_deadlines(answer.content)
 
 
 # ----------------------------------------------------------------------------
@@ -1203,49 +1186,9 @@ def run_case(folder):
             output.append(f'{file_name}: login accepted for {login["name"]}, '
                           f'{len(login["course_codes"])} courses found')
 
-    for file_name in case.get("lms_pages", []):
-        def read_page():
-            return read_lms_sesskey(read_text_file(os.path.join(folder, file_name)))
-        if attempt(file_name, read_page) is not None:
-            output.append(f"{file_name}: logged in to Smart LMS")
-
-    for file_name in case.get("lms_event_replies", []):
-        def read_events():
-            with open(os.path.join(folder, file_name), encoding="utf-8") as handle:
-                return read_lms_events_reply(json.load(handle))
-        deadlines = attempt(file_name, read_events)
-        if deadlines is not None:
-            output.extend([f"{file_name}:", report_deadlines(rate_deadlines(deadlines, now)), ""])
-
-    for file_name in case.get("canvas_pages", []):
-        def read_canvas_page():
-            return read_canvas_user(read_text_file(os.path.join(folder, file_name)))
-        if attempt(file_name, read_canvas_page) is not None:
-            output.append(f"{file_name}: logged in to nsmart.wsu.ac.kr")
-
-    for file_name in case.get("canvas_replies", []):
-        def read_planner():
-            return read_canvas_planner_reply(read_canvas_json(
-                read_text_file(os.path.join(folder, file_name))))
-        deadlines = attempt(file_name, read_planner)
-        if deadlines is not None:
-            output.extend([f"{file_name}:", report_deadlines(rate_deadlines(deadlines, now)), ""])
-
     for link in case.get("calendar_links", []):
         if attempt(link, lambda: check_calendar_link(link)) is not None:
             output.append(f"{link}: accepted")
-
-    if case.get("merge_both_sites"):
-        def merge_both():
-            with open(os.path.join(folder, case["merge_both_sites"][0]), encoding="utf-8") as handle:
-                old_site = read_lms_events_reply(json.load(handle))
-            new_site = read_canvas_planner_reply(read_canvas_json(
-                read_text_file(os.path.join(folder, case["merge_both_sites"][1]))))
-            return merge_deadlines(old_site, new_site)
-        deadlines = attempt("Both sites", merge_both)
-        if deadlines is not None:
-            output.extend(["Both sites together:",
-                           report_deadlines(rate_deadlines(deadlines, now)), ""])
 
     return "\n".join(output).rstrip() + "\n"
 

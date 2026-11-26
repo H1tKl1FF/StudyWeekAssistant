@@ -29,7 +29,7 @@ for folder, _, files in os.walk(os.path.join(project, "test_cases")):
 
 # Libraries that app_browser.py and project_code.py import
 hiddenimports += [
-    "csv", "html", "importlib", "io", "json", "re", "subprocess",
+    "csv", "html.parser", "importlib", "io", "json", "re", "subprocess",
     "datetime", "requests", "PIL", "PIL.Image",
 ]
 

@@ -1,9 +1,0 @@
-[
- {
-  "error": true,
-  "exception": {
-   "message": "Course or activity not accessible. (You are not logged in)",
-   "errorcode": "servicerequireslogin"
-  }
- }
-]
