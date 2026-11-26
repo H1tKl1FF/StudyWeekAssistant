@@ -146,11 +146,19 @@ def load_demo_week():
 def clear_everything():
     upload_round = st.session_state.upload_round + 1     # new round = empty upload boxes
     for key in ("group", "my_name", "deadlines", "attendance", "demo", "loaded_files",
-                "member_sources", "login_notes", "passkey_login"):
+                "member_sources", "login_notes", "passkey_login", "deadline_sources"):
         st.session_state.pop(key, None)
     start_memory()
     st.session_state.upload_round = upload_round
     st.session_state.page = "home"
+
+
+def save_deadlines(source, found):
+    """New deadlines from one source (login, links or file) replace that source's old ones only,
+    so a moved due date does not stay twice, and the other sources are kept."""
+    sources = {**st.session_state.get("deadline_sources", {}), source: found}
+    st.session_state.deadline_sources = sources
+    st.session_state.deadlines = core.merge_deadlines(*sources.values())
 
 
 def current_time():
@@ -833,8 +841,7 @@ def passkey_dialog():
     except core.InputError as problem:
         note = ("warning", f"Smart LMS (i-ONE PASS): {problem}")
     else:
-        # add to what the calendar links gave (nsmart), do not replace it
-        st.session_state.deadlines = core.merge_deadlines(st.session_state.deadlines, found)
+        save_deadlines("login", found)
         note = ("success", f"Deadlines loaded from Smart LMS: {len(found)} entries.")
     st.session_state.passkey_login = None
     st.session_state.login_notes = st.session_state.get("login_notes", []) + [note]
@@ -872,8 +879,7 @@ def draw_links_box():
         with st.spinner("Getting your deadlines from the calendar links..."):
             deadlines, problems = core.fetch_deadlines_from_links([smart_link, nsmart_link])
         if deadlines or not problems:
-            # add to what the i-ONE PASS login gave (smart), do not replace it
-            st.session_state.deadlines = core.merge_deadlines(st.session_state.deadlines, deadlines)
+            save_deadlines("links", deadlines)
             st.success(f"Deadlines loaded from your calendar links: {len(deadlines)} entries.")
         show_login_problems(problems)
 
@@ -904,8 +910,9 @@ def draw_upload_box():
             return len(blocks)
 
         def save_calendar(data, _):
-            st.session_state.deadlines = core.load_deadlines(data)
-            return len(st.session_state.deadlines)
+            found = core.load_deadlines(data)
+            save_deadlines("file", found)
+            return len(found)
 
         def save_attendance(data, _):
             st.session_state.attendance = core.load_attendance_csv(data)

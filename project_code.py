@@ -56,18 +56,6 @@ EARLY_LEAVE_COUNTS_AS_LATE = True
 KOREA_TIME = timezone(timedelta(hours=9))
 
 ATTENDANCE_SITE = "https://att.wsu.ac.kr"
-SMART_LMS_SITE = "https://smart.wsu.ac.kr"
-# Deadlines asked from Smart LMS: from one week ago (to show overdue work)
-# until 60 days ahead (the same period as the calendar export).
-DEADLINE_DAYS_BACK = 7
-DEADLINE_DAYS_AHEAD = 60
-SMART_LMS_MAX_EVENTS = 50          # the most Smart LMS sends in one answer
-# The second Smart LMS site (Canvas). Some courses put their work only here.
-NEW_SMART_LMS_SITE = "https://nsmart.wsu.ac.kr"
-NEW_SMART_LMS_MAX_ITEMS = 100      # one page of the planner list is enough
-# Planner entries that are work to hand in (not announcements or own notes)
-NEW_SMART_LMS_WORK_TYPES = {"assignment", "quiz", "discussion_topic",
-                            "assessment_request", "sub_assignment"}
 
 # Status codes used by the attendance site (taken from the site's own code).
 SITE_ABSENT_CODES = {"0", "1", "11", "21", "31"}
@@ -111,10 +99,6 @@ def reads_site_answer(message):
 
 ATTENDANCE_ANSWER_UNREADABLE = ("The attendance site sent an answer this app could not read. "
                                 "Use a timetable screenshot instead.")
-SMART_ANSWER_UNREADABLE = ("Smart LMS sent an answer this app could not read. "
-                           "Upload the calendar file instead.")
-NSMART_ANSWER_UNREADABLE = ("nsmart.wsu.ac.kr sent an answer this app could not read. "
-                            "Upload the calendar file instead.")
 
 
 # ----------------------------------------------------------------------------
@@ -915,6 +899,7 @@ SIGN_IN_HOSTS = ("sso.wsu.ac.kr", "smart.wsu.ac.kr")
 BROWSER_AGENT = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
                  "(KHTML, like Gecko) Chrome/130 Safari/537.36")   # the SSO page refuses unknown clients
 AJAX = {"X-Requested-With": "XMLHttpRequest"}
+MAX_REDIRECTS = 10                        # more than this means the sign-in goes in circles
 PUSH_NOT_YET = {"1012", "1013"}           # the site's codes for "not approved on the phone yet"
 KOREA_TIME_OFFSET = "-540"                # what a browser in Korea sends as getTimezoneOffset()
 SIGN_IN_CHANGED = ("The university sign-in page has changed and this app cannot use it now. "
@@ -963,11 +948,15 @@ def _sign_in_request(session, method, url, **options):
         raise InputError(SIGN_IN_CHANGED)
     try:
         answer = session.request(method, url, timeout=20, allow_redirects=False, **options)
-        while answer.is_redirect:              # follow redirects only within the two sites
+        for _ in range(MAX_REDIRECTS):         # follow redirects only within the two sites
+            if not answer.is_redirect:
+                break
             url = urljoin(answer.url, answer.headers["Location"])
             if urlsplit(url).hostname not in SIGN_IN_HOSTS:
                 raise InputError(SIGN_IN_CHANGED)
             answer = session.request("GET", url, timeout=20, allow_redirects=False)
+        if answer.is_redirect:                 # the site keeps sending us around in a circle
+            raise InputError(SIGN_IN_CHANGED)
         answer.raise_for_status()
         return answer
     except requests.RequestException:

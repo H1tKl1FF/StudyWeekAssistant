@@ -2,7 +2,7 @@
 
 Python Programming for Business, Final Group Project (2026 Fall)
 
-The app is finished (version 1.5.0). What is left is the presentation, the slides, a live demo, and a short update to the README. This file splits that work among four people. If your group has three people, Speaker 3 also takes Part 4.
+The app is finished (version 1.5.0). What is left is the presentation, the slides and a live demo. This file splits that work among four people. If your group has three people, Speaker 3 also takes Part 4.
 
 **Total time: about 12 minutes plus questions.** Times are a guide. Practise once with a timer.
 
@@ -15,7 +15,7 @@ The app is finished (version 1.5.0). What is left is the presentation, the slide
 | Speaker 1 | Part 1: The problem and the idea (2 min) | Slides 1-3, opening and closing |
 | Speaker 2 | Part 2: Live demo (4 min) | Installs the app, runs the demo twice before the day, makes backup screenshots |
 | Speaker 3 | Part 3: How the code works (3 min) | Slides 6-9, reads Parts 4-6 of `project_code.py` |
-| Speaker 4 | Part 4: Testing, safety and limits (2 min), then leads Q&A | Slides 10-12, runs the tests, updates the README (see the end of this file) |
+| Speaker 4 | Part 4: Testing, safety and limits (2 min), then leads Q&A | Slides 10-12, runs the tests |
 
 Everyone reads the "Questions we may get" section.
 
@@ -23,8 +23,7 @@ Everyone reads the "Questions we may get" section.
 
 - [ ] Speaker 2: install `StudyWeekAssistant-Setup-1.5.0.exe` on the laptop used for the presentation. Open the app once and press **Try the demo week**.
 - [ ] Speaker 2: take screenshots of Home, Meet, Deadlines and Attendance (demo week). Put them in the slides as a backup if the live demo fails.
-- [ ] Speaker 4: run `python project_code.py --test` and take a screenshot of the result (9 passed, 0 failed).
-- [ ] Speaker 4: update the "HOW TO GET YOUR OWN DATA IN" part of README.txt (see the end of this file).
+- [ ] Speaker 4: run `python project_code.py --test` (7 passed, 0 failed) and `python test_passkey.py` (PASSKEY OK), and take a screenshot of both.
 - [ ] Everyone: one full practice run with a timer.
 - [ ] Never show a real student ID, password or calendar link on the screen. Use the demo week only.
 
@@ -68,7 +67,7 @@ Use the demo week only (invented students, no password). Open the app before the
    > "For each course: how many classes you can still miss. The rule is from the Woosong academic regulations: more than one third absent means the course is failed. Three lates count as one absence. The colour tells you the status: safe, warning, danger or failed."
 
 5. **My data.**
-   > "Real students get their own data here. Option 1 is to log in once with your student ID to get your timetable and attendance. Since December, Smart LMS asks for a passkey, so for deadlines you paste your personal calendar links. No password is needed for those. You can also upload a screenshot or a file."
+   > "Real students get their own data here. Option 1: log in once with your student ID and password. The password gets your timetable and attendance. Smart LMS now asks for a passkey, so the app then sends an i-ONE PASS request to your phone. You approve it, click OK, and your deadlines load. For the second Smart LMS site, nsmart, you paste your personal calendar link. You can also upload a screenshot or a file."
 
    Do not type anything into the fields.
 
@@ -82,7 +81,7 @@ Use the demo week only (invented students, no password). Open the app before the
 
 **Slide 6: Two files.**
 
-> "The project has two main files. `project_code.py` does all the calculations: about 1,300 lines in nine parts. `app_browser.py` only draws the screens, with the Streamlit library. That way, the same logic is used by the browser app, the test runner and the terminal menu."
+> "The project has two main files. `project_code.py` does all the calculations: about 1,200 lines in nine parts. `app_browser.py` only draws the screens, with the Streamlit library. That way, the same logic is used by the browser app, the test runner and the terminal menu."
 
 **Slide 7: Meeting finder** (`find_meeting_slots`, Part 4).
 
@@ -104,17 +103,17 @@ Optional, if there is time: the screenshot reader (`timetable_from_screenshot`) 
 
 **Slide 10: Tests.**
 
-> "We have nine test cases. Each case has input files and the output we expect. One command runs them all and prints PASS or FAIL. They cover a normal week, a week with no common time, wrong files, login problems, unusual but valid data, both Smart LMS sites, odd inputs, and the new calendar links. All 9 pass."
+> "We have seven test cases. Each case has input files and the output we expect. One command runs them all and prints PASS or FAIL. They cover a normal week, a week with no common time, wrong files, login problems, unusual but valid data, odd inputs, and the calendar links. All 7 pass. A second test runs the whole i-ONE PASS sign-in against a fake university site, so no real student is needed."
 
 Show the screenshot of the test result.
 
 **Slide 11: Privacy and safety.**
 
-> "The app runs only on your own computer. The password is used for one login request and is never saved. Calendar links are hidden like passwords. The app only opens https links to the two Smart LMS sites. All the students in our demo and tests are invented."
+> "The app runs only on your own computer. The password goes only to the attendance site, for one login request, and is never saved. Smart LMS uses i-ONE PASS on your own phone, so no password is sent there. The sign-in only ever talks to the university's own sites. Calendar links are hidden like passwords. All the students in our demo and tests are invented."
 
 **Slide 12: Limits and what we learned.**
 
-> "Our limits: if the university changes its websites, the login may stop working. Uploading files still works then. The screenshot reader needs a full, uncropped screenshot. And in December, Smart LMS started asking for a passkey. Our login could not do that, so we added calendar links. That taught us not to depend on one way of getting data."
+> "Our limits: if the university changes its websites, the login may stop working. Uploading files still works then. The screenshot reader needs a full, uncropped screenshot. And in December, Smart LMS started asking for a passkey, and our password login stopped working. We rebuilt the login around i-ONE PASS, and kept calendar links and file upload as backups. That taught us not to depend on one way of getting data."
 
 **Closing (Speaker 1, 15 seconds):**
 
@@ -134,32 +133,13 @@ It is from the Woosong academic regulations, article 10: more than one third abs
 The login stops working, and the app shows a clear message. Screenshots, timetable files and calendar files still work.
 
 **Is it safe to give the app my password?**
-The password is sent only to the university site, over https, for one request. It is never written to a file. For the presentation we use the demo week, so no password is used.
+The password is sent only to the attendance site, over https, for one request. It is never written to a file. Smart LMS uses i-ONE PASS on your phone instead of the password. For the presentation we use the demo week, so no password is used.
 
-**Why calendar links and not the login for deadlines?**
-Since December 2026, Smart LMS needs a passkey (I-ONE PASS), which a program cannot use. Every student has a personal calendar link that works without logging in.
+**How does the app log in to Smart LMS with a passkey?**
+It does the same steps as the sign-in page: it asks i-ONE PASS to send a request to the student's phone, waits until the student approves it, then downloads the student's calendar. The app never sees a passkey or a password for Smart LMS. It reads the first site (smart); for the second site (nsmart) the student pastes a calendar link.
 
 **How did you test the code that talks to the websites?**
-We saved real site answers (with invented data) as files. The tests read those files instead of the live site, so no real password is needed.
+We saved real site answers (with invented data) as files. The tests read those files instead of the live site, so no real password is needed. For i-ONE PASS, `test_passkey.py` plays the university site and the phone, including a phone that has not approved yet.
 
 **How did you share the app?**
 There is a Windows installer, and the versions are published as GitHub releases. On a Mac, you run it with Python (HOW_TO_RUN.md).
-
----
-
-## Small task: update README.txt (Speaker 4)
-
-README.txt still says the login gets deadlines from Smart LMS. Since the passkey change, that is no longer true. In the section "HOW TO GET YOUR OWN DATA IN", replace "Deadlines - choose one: a) ..." with:
-
-```
-  Deadlines - choose one:
-    a) Paste your Smart LMS calendar links (My data page). They work
-       without a password, also with passkey login.
-       smart.wsu.ac.kr:  Calendar > Export calendar > All events,
-                         Recent and next 60 days > Get calendar URL
-       nsmart.wsu.ac.kr: Calendar > Calendar feed (bottom right)
-       Each link is personal, like a password: never share it.
-    b) Or upload the calendar file (.ics) by hand.
-```
-
-Under "KNOWN LIMITS", also change the "Deadlines by login" line to say that the Smart LMS login needs a passkey since December 2026, so calendar links are used.

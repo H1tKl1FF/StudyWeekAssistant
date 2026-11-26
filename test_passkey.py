@@ -103,6 +103,10 @@ hop = FakeSite({("GET", f"{SSO}/a"): [Answer(f"{SSO}/a", go_to="/b")],
 assert core._sign_in_request(hop, "GET", f"{SSO}/a").text == "arrived"
 fails(lambda: core._sign_in_request(hop, "GET", f"{SSO}/out"), "sign-in page has changed")
 assert ("GET", "https://evil.example/x", None) not in hop.sent
+loop = FakeSite({("GET", f"{SSO}/a"): [Answer(f"{SSO}/a", go_to="/b")],
+                 ("GET", f"{SSO}/b"): [Answer(f"{SSO}/b", go_to="/a")]})
+fails(lambda: core._sign_in_request(loop, "GET", f"{SSO}/a"), "sign-in page has changed")
+assert len(loop.sent) == core.MAX_REDIRECTS + 1, len(loop.sent)
 
 # Smart LMS course codes are dropped from course names; ordinary brackets stay
 assert core.short_course("ProgrammingforBusiness (2026-20, 0013837_001_120_1200500410040)") == "ProgrammingforBusiness"
